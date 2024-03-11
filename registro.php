@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     else {
         $passwordHasheado = password_hash($password, PASSWORD_BCRYPT);
 
-        $sql = "INSERT INTO usuarios (name, surname, gender, email, password) VALUES (:name, :surname, :gender, :email, :password)";
+        $sql = "INSERT INTO usuarios (name, surname, gender, email, password, role, active) VALUES (:name, :surname, :gender, :email, :password, :role, :active)";
 
         $result = $conn->prepare($sql);
 
@@ -58,6 +58,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':gender' => $genero,
             ':email' => $email,
             ':password' => $passwordHasheado,
+            ':role' => 0,
+            ':active' => 1
         ));
 
         header("Location: login.html");
