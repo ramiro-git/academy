@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php include("config/sesion.php"); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +10,9 @@
 </head>
 
 <body>
-    <?php if ($_SESSION['user_id'] !== '') echo "<a href='logout.php'>Cerrar Sesión</a>"; ?>
+    <h1>Inicio</h1>
+
+    <?php if ($user_id != '') echo "<a href='logout.php'>Cerrar Sesión</a>" ?>
 </body>
 
 </html>

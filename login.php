@@ -1,6 +1,6 @@
 <?php
 
-include("config/db.php");
+include("config/sesion.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $errors = array();
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user_id'] = $row['id'];
 
                 header('Location: index.php');
-            } else $errors[''] = "No coincide la contraseña";
-        } else $errors[''] = "No existe el Usuario.";
+            }
+        }
     }
 }
