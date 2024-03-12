@@ -5,6 +5,8 @@ include("config/sesion.php");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $errors = array();
 
+    $success = false;
+
     $nombre = (isset($_POST["name"])) ? $_POST["name"] : NULL;
     $apellido = (isset($_POST["surname"])) ? $_POST["surname"] : NULL;
     $genero = (isset($_POST["gender"])) ? $_POST["gender"] : NULL;
@@ -44,8 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result_check_email['count'] > 0) $errors['email'] = "El correo electrónico ya está registrado.";
 
-    if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error;
-    else {
+    if (empty($errors)) {
         $passwordHasheado = password_hash($password, PASSWORD_BCRYPT);
 
         $sql = "INSERT INTO usuarios (name, surname, gender, email, password, role, active) VALUES (:name, :surname, :gender, :email, :password, :role, :active)";
@@ -62,6 +63,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':active' => 1
         ));
 
-        header("Location: login.html");
+        header("Location: login.php");
     }
 }
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro</title>
+</head>
+
+<body>
+    <h2>Registrar Usuario</h2>
+
+    <form action="registro.php" method="POST">
+        <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
+        
+        Nombre:
+        <input type="text" name="name" id="name" required value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>" />
+
+        Apellido:
+        <input type="text" name="surname" id="surname" required value="<?php echo isset($_POST['surname']) ? htmlspecialchars($_POST['surname']) : ''; ?>" />
+
+        Género:
+        <select name="gender" id="gender">
+            <option value="male" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'male') ? 'selected' : ''; ?>>Masculino</option>
+            <option value="female" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'female') ? 'selected' : ''; ?>>Femenino</option>
+            <option value="ratherNotSay" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'ratherNotSay') ? 'selected' : ''; ?>>Prefiero no decirlo</option>
+        </select>
+
+        Email:
+        <input type="email" name="email" id="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
+
+        Contraseña:
+        <input type="password" name="password" id="password" required />
+
+        Repetir Contraseña:
+        <input type="password" name="password_repeat" id="password_repeat" required />
+
+        <button type="submit">Registrame</button>
+    </form>
+
+    <a href="login.php">¿Ya tienes cuenta? Iniciar Sesión</a>
+    <a href="olvide.php">¿Olvidaste la contraseña? Recuperar Contraseña</a>
+</body>
+
+</html>

@@ -13,8 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors['email'] = "El E-Mail tiene un formato inválido";
 
-    if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error;
-    else {
+    if (empty($errors)) {
         $sql = "SELECT * FROM usuarios WHERE email= :email";
 
         $result = $conn->prepare($sql);
@@ -34,3 +33,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recuperar Contraseña</title>
+</head>
+
+<body>
+    <form action="olvide.php" method="POST">
+        <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
+
+        Email:
+        <input type="email" name="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
+
+        <button type="submit">Recuperar Contraseña</button>
+    </form>
+</body>
+
+</html>
