@@ -6,6 +6,11 @@ include("../config/functions.php");
 
 isAdmin($user_id, $conn);
 
+if(empty($_SESSION['admin_id'])) {
+    header("Location: ../index.php"); // Redirigir al usuario al index.php
+    exit(); // Detener la ejecución del script después de la redirección
+}
+
 $select_profile = $conn->prepare("SELECT * FROM `usuarios` WHERE id = ?");
 $select_profile->execute([$user_id]);
 

@@ -3,14 +3,6 @@
 // Función para verificar si el usuario es administrador
 function isAdmin($user_id, $conn)
 {
-    // Verificar si $user_id está vacío
-    if ($user_id === '') {
-        // Si $user_id está vacío, establecemos $_SESSION['admin_id'] como vacío
-        // Esto indica que no hay un usuario logueado y por lo tanto no puede ser administrador
-        $_SESSION['admin_id'] = '';
-        return; // Salir de la función ya que no hay nada más que hacer
-    }
-
     // Si $user_id no está vacío, significa que hay un usuario logueado
     // Por lo tanto, procedemos a buscar en la base de datos para determinar si es administrador
     $select_role = $conn->prepare("SELECT * FROM `usuarios` WHERE id = ?");
