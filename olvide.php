@@ -54,6 +54,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <button type="submit">Recuperar Contraseña</button>
     </form>
+
+    <a href="login.php">¿Ya tienes cuenta? Iniciar Sesión</a>
+    <a href="registro.php">¿No tienes cuenta? Registrate</a>
 </body>
 
 </html>

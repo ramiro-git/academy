@@ -13,6 +13,8 @@
     <h1>Inicio</h1>
 
     <?php if ($user_id != '') echo "<a href='update.php?id=$user_id'>Actualizar</a><br /><a href='logout.php'>Cerrar Sesión</a>" ?>
+
+    <?php if ($user_id == '') echo "<a href='login.php'>Login</a><br /><a href='registro.php'>Registro</a>"; ?>
 </body>
 
 </html>

@@ -77,6 +77,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <button type="submit">Iniciar Sesión</button>
     </form>
+
+    <a href="login.php">¿Ya tienes cuenta? Iniciar Sesión</a>
+    <a href="olvide.php">¿Olvidaste la contraseña? Recuperar Contraseña</a>
 </body>
 
 </html>

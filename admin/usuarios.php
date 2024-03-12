@@ -49,11 +49,11 @@ if (empty($_SESSION['admin_id'])) {
         </thead>
         <tbody>
             <?php
-            $num_alumnos_por_pagina = 2;
+            $num_alumnos_por_pagina = 5;
             $pagina_actual = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
             $inicio = ($pagina_actual - 1) * $num_alumnos_por_pagina;
 
-            $get_users = $conn->prepare("SELECT * FROM `usuarios` ORDER BY id DESC LIMIT $inicio, $num_alumnos_por_pagina");
+            $get_users = $conn->prepare("SELECT * FROM `usuarios` LIMIT $inicio, $num_alumnos_por_pagina");
             $get_users->execute();
 
             if ($get_users->rowCount() > 0) {
@@ -81,26 +81,32 @@ if (empty($_SESSION['admin_id'])) {
 
     <!-- Controles de paginación -->
     <?php
-    if ($num_alumnos_por_pagina != 0) $total_paginas = ceil($cantAlumnosRegistrados / $num_alumnos_por_pagina);
+    $total_paginas = round($cantAlumnosRegistrados / $num_alumnos_por_pagina);
+
+    if ($total_paginas > 1) {
+        echo "<div>";
+        if ($pagina_actual > 1) {
+            echo "<a href='?pagina=1'>Primera</a>";
+            $anterior = $pagina_actual - 1;
+            echo "<a href='?pagina=$anterior'>Anterior</a>";
+        }
+
+        for ($i = 1; $i <= $total_paginas; $i++) {
+            if ($pagina_actual == $i) {
+                echo "<strong>$i</strong>";
+            } else {
+                echo "<a href='?pagina=$i'>$i</a>";
+            }
+        }
+
+        if ($pagina_actual < $total_paginas) {
+            $siguiente = $pagina_actual + 1;
+            echo "<a href='?pagina=$siguiente'>Siguiente</a>";
+            echo "<a href='?pagina=$total_paginas'>Última</a>";
+        }
+        echo "</div>";
+    }
     ?>
-
-    <div>
-        <?php if ($pagina_actual > 1) : ?>
-            <a href="?pagina=<?= $pagina_actual - 1 ?>">Anterior</a>
-        <?php endif; ?>
-
-        <?php for ($i = 1; $i <= $total_paginas; $i++) : ?>
-            <?php if ($i == $pagina_actual) : ?>
-                <strong><?= $i ?></strong>
-            <?php else : ?>
-                <a href="?pagina=<?= $i ?>"><?= $i ?></a>
-            <?php endif; ?>
-        <?php endfor; ?>
-
-        <?php if ($pagina_actual < $total_paginas) : ?>
-            <a href="?pagina=<?= $pagina_actual + 1 ?>">Siguiente</a>
-        <?php endif; ?>
-    </div>
 </body>
 
 </html>
