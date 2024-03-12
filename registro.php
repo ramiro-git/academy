@@ -5,8 +5,6 @@ include("config/sesion.php");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $errors = array();
 
-    $success = false;
-
     $nombre = (isset($_POST["name"])) ? $_POST["name"] : NULL;
     $apellido = (isset($_POST["surname"])) ? $_POST["surname"] : NULL;
     $genero = (isset($_POST["gender"])) ? $_POST["gender"] : NULL;
@@ -83,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <form action="registro.php" method="POST">
         <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
-        
+
         Nombre:
         <input type="text" name="name" id="name" required value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>" />
 
