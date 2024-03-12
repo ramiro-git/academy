@@ -24,7 +24,7 @@ function recuperacion($email, $token)
         $mail->CharSet = 'UTF-8';
         $mail->Subject =  'Recuperación de Cuenta';
         $cuerpo = '<h4>Has solicitado una recuperación de la cuenta en Academia.</h4>';
-        $cuerpo .= '<h4>Sí ha realizado dicha solicitud, haga click en el siguiente enlace para restablecer su contraseña: <a style="text-decoration: none;" href="http://localhost/academia/reset_password.php?token=' . $token . '">Recuperar Cuenta</a></h4>';
+        $cuerpo .= '<h4>Sí ha realizado dicha solicitud, haga click en el siguiente enlace para restablecer su contraseña: <a style="text-decoration: none;" href="http://localhost/academia/reset.php?token=' . $token . '">Recuperar Cuenta</a></h4>';
         $cuerpo .= '<h5>Sí no ha realizado esta solicitud, ignore este correo electrónico.</h5>';
         $cuerpo .= '<p>Sí tenés otra duda/consulta, no dudes en consultarnos en <a style="text-decoration: none;" href="http://localhost/academia/contacto.php">Academia</a>, ó envianos un mail a este mismo correo: <b>academia@gmail.com</b></p>';
         $mail->Body = utf8_decode($cuerpo);
