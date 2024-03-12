@@ -14,11 +14,11 @@ function recuperacion($email, $token)
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = '';
-        $mail->Password   = '';
+        $mail->Username   = 'ramirobelfiore@gmail.com';
+        $mail->Password   = ''; // Agregar password para que funcione
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port       = 465;
-        $mail->setFrom('', 'Academia');
+        $mail->setFrom("ramirobelfiore@mail.com", 'Academia');
         $mail->addAddress($email, $token);
         $mail->isHTML(true);
         $mail->CharSet = 'UTF-8';
@@ -32,7 +32,7 @@ function recuperacion($email, $token)
         $mail->setLanguage('es', '../PHPMailer/language/phpmailer.lang-es.php');
         $mail->send();
     } catch (Exception $e) {
-        echo "Error al enviar el correo electrónico de la compra: {$mail->ErrorInfo}";
+        echo "Error al enviar el correo electrónico: {$mail->ErrorInfo} | " . $e;
         exit;
     }
 }

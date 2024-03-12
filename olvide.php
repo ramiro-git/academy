@@ -2,6 +2,8 @@
 
 include("config/sesion.php");
 
+include("config/mails.php");
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $errors = array();
 
