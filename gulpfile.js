@@ -17,7 +17,7 @@ async function imagenes() {
   const webp = await import("gulp-webp");
   return src(paths.imagenes)
     .pipe(webp.default())
-    .pipe(dest("public/build/img"))
+    .pipe(dest("build/img"))
     .pipe(notify({ message: "Imagen Completada" }));
 }
 
@@ -25,7 +25,7 @@ async function versionWebp() {
   const webp = await import("gulp-webp");
   return src(paths.imagenes)
     .pipe(webp.default())
-    .pipe(dest("public/build/img"))
+    .pipe(dest("build/img"))
     .pipe(notify({ message: "Imagen Completada" }));
 }
 
@@ -35,14 +35,14 @@ function css() {
     .pipe(sass())
     .pipe(postcss([autoprefixer(), cssnano()]))
     .pipe(sourcemaps.write("."))
-    .pipe(dest("public/build/css"));
+    .pipe(dest("build/css"));
 }
 
 function javascript() {
   return src(paths.js)
     .pipe(terser())
     .pipe(sourcemaps.write("."))
-    .pipe(dest("public/build/js"));
+    .pipe(dest("build/js"));
 }
 
 function watchArchivos() {

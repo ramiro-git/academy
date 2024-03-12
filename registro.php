@@ -74,12 +74,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro</title>
+    <link rel="stylesheet" href="build/css/app.css" />
 </head>
 
 <body>
     <h2>Registrar Usuario</h2>
 
-    <form action="registro.php" method="POST">
+    <form action="registro.php" method="POST" class="bordesFormulario">
         <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
         Nombre:
