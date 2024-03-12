@@ -18,7 +18,7 @@ function recuperacion($email, $token)
         $mail->Password   = ''; // Agregar password para que funcione
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port       = 465;
-        $mail->setFrom("ramirobelfiore@mail.com", 'Academia');
+        $mail->setFrom("ramirobelfiore@gmail.com", 'Academia');
         $mail->addAddress($email, $token);
         $mail->isHTML(true);
         $mail->CharSet = 'UTF-8';
