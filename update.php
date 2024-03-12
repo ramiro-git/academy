@@ -41,8 +41,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!in_array($genero, $generosPermitidos)) $errors['gender'] = "El género seleccionado no es válido.";
 
+    if ($password != NULL && $password != NULL) {
+        if (strlen($password) < 6) $errors['password'] = "La contraseña debe contener mínimo 6 caracteres";
+
+        if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password)) $errors['password'] = "La contraseña debe contener al menos una letra mayúscula, una letra minúscula y un número.";
+
+        if ($password != $password_repeat) $errors['password_repeat'] = "Las contraseñas no coinciden";
+
+        $passwordHasheado = password_hash($password, PASSWORD_BCRYPT);
+    }
+
     if (empty($errors)) {
-        $sql = "UPDATE usuarios SET name = :name, surname = :surname, gender = :gender, twoFactor = :twoFactor WHERE id = :user_id";
+        $sql = "UPDATE usuarios SET name = :name, surname = :surname, gender = :gender, twoFactor = :twoFactor";
+
+        if ($password !== NULL && $password_repeat !== NULL && empty($errors['password']) && empty($errors['password_repeat'])) $sql .= ", password = :password";
+
+        $sql .= " WHERE id = :user_id";
 
         $result = $conn->prepare($sql);
 
@@ -53,6 +67,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':twoFactor' => $twoFactor,
             ':user_id' => $user_id,
         );
+
+        if ($password !== NULL && $password_repeat !== NULL && empty($errors['password']) && empty($errors['password_repeat'])) $params[':password'] = $passwordHasheado;
 
         $result->execute($params);
 

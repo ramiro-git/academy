@@ -3,6 +3,8 @@
 // Incluir archivo de sesión para manejar sesiones de usuario
 include("config/sesion.php");
 
+include("config/mails.php");
+
 // Verificar si la solicitud HTTP es de tipo POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Array para almacenar errores de validación
@@ -47,8 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // Redirigir al usuario a la página principal
                 header('Location: index.php');
-            }
-        }
+            } else $errors['general'] = "Las credenciales no son válidas";
+        } else $errors['general'] = "Las credenciales no son válidas";
     }
 }
 
