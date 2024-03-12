@@ -23,8 +23,12 @@ if (empty($_SESSION['admin_id'])) {
 <body>
     <!-- Acá iría la sección de gráficos -->
 
-    <?php $get_cantidad_alumnos = $conn->query("SELECT COUNT(*) FROM `usuarios` WHERE role = 0");
+    <?php
+    $get_cantidad_alumnos = $conn->query("SELECT COUNT(*) FROM `usuarios`");
     $cantAlumnosRegistrados = $get_cantidad_alumnos->fetchColumn();
+
+    $get_cantidad_alumnos_usuarios = $conn->query("SELECT COUNT(*) FROM `usuarios` WHERE role = 0");
+    $cantAlumnosRegistradosUsuarios = $get_cantidad_alumnos_usuarios->fetchColumn();
 
     $lastMonthDate = date('Y-m-d', strtotime('-1 month'));
 
@@ -32,7 +36,7 @@ if (empty($_SESSION['admin_id'])) {
     $cantAlumnosRegistradosNuevos = $get_cantidad_alumnos_nuevos->fetchColumn();
     ?>
 
-    <h2>Cantidad de alumnos registrados: <?= $cantAlumnosRegistrados ?></h2>
+    <h2>Cantidad de alumnos registrados: <?= $cantAlumnosRegistradosUsuarios ?></h2>
     <h2>Cantidad de alumnos registrados el último mes: <?= $cantAlumnosRegistradosNuevos ?></h2>
 
     <table>
@@ -49,11 +53,11 @@ if (empty($_SESSION['admin_id'])) {
         </thead>
         <tbody>
             <?php
-            $num_alumnos_por_pagina = 5;
+            $num_alumnos_por_pagina = 10;
             $pagina_actual = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
             $inicio = ($pagina_actual - 1) * $num_alumnos_por_pagina;
 
-            $get_users = $conn->prepare("SELECT * FROM `usuarios` LIMIT $inicio, $num_alumnos_por_pagina");
+            $get_users = $conn->prepare("SELECT * FROM `usuarios` ORDER BY id DESC LIMIT $inicio, $num_alumnos_por_pagina");
             $get_users->execute();
 
             if ($get_users->rowCount() > 0) {
@@ -74,36 +78,34 @@ if (empty($_SESSION['admin_id'])) {
                         <td><?= $fetch_users['active'] ? "Sí" : "No"; ?></td>
                         <td><a href="updateUser?id=<?= $fetch_users["id"] ?>">Editar</a> <a href="deleteUser?id=<?= $fetch_users['id'] ?>">Eliminar</a></td>
                 <?php }
-            } else echo '<tr><td colspan="5">Aún no hay alumnos</td></tr>';
-                ?>
+            } else echo '<tr><td colspan="5">Aún no hay alumnos</td></tr>'; ?>
         </tbody>
     </table>
 
-    <!-- Controles de paginación -->
     <?php
-    $total_paginas = round($cantAlumnosRegistrados / $num_alumnos_por_pagina);
+    if ($num_alumnos_por_pagina != 0) $total_paginas = ceil($cantAlumnosRegistrados / $num_alumnos_por_pagina);
 
     if ($total_paginas > 1) {
         echo "<div>";
         if ($pagina_actual > 1) {
-            echo "<a href='?pagina=1'>Primera</a>";
+            echo "<a href='?pagina=1'> Primera </a>";
             $anterior = $pagina_actual - 1;
-            echo "<a href='?pagina=$anterior'>Anterior</a>";
+            echo "<a href='?pagina=$anterior'> Anterior </a>";
         }
 
         for ($i = 1; $i <= $total_paginas; $i++) {
-            if ($pagina_actual == $i) {
-                echo "<strong>$i</strong>";
-            } else {
-                echo "<a href='?pagina=$i'>$i</a>";
-            }
+            if ($pagina_actual == $i) echo "<strong> $i </strong>";
+            else echo "<a href='?pagina=$i'>$i</a>";
         }
 
         if ($pagina_actual < $total_paginas) {
             $siguiente = $pagina_actual + 1;
-            echo "<a href='?pagina=$siguiente'>Siguiente</a>";
-            echo "<a href='?pagina=$total_paginas'>Última</a>";
+            echo "<a href='?pagina=$siguiente'> Siguiente </a>";
         }
+        if ($pagina_actual != $total_paginas) {
+            echo "<a href='?pagina=$total_paginas'> Última </a>";
+        }
+
         echo "</div>";
     }
     ?>
