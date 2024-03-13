@@ -6,7 +6,7 @@ include("../config/functions.php");
 
 isAdmin($user_id, $conn);
 
-if(empty($_SESSION['admin_id'])) {
+if (empty($_SESSION['admin_id'])) {
     header("Location: ../index.php"); // Redirigir al usuario al index.php
     exit(); // Detener la ejecución del script después de la redirección
 }
@@ -32,6 +32,8 @@ if ($select_profile->rowCount() > 0) $fetch_profile = $select_profile->fetch(PDO
     <h2>Bienvenido, <?php echo $fetch_profile['name']; ?></h2>
 
     <a href="usuarios.php">Usuarios</a>
+    <a href="instructores.php">Instructores</a>
+    <a href="inscripciones.php">Inscripciones</a>
     <a href="cursos.php">Cursos</a>
     <a href="materias.php">Materias</a>
     <a href="materiales.php">Materiales</a>

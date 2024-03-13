@@ -1,22 +1,25 @@
 <?php
+// Incluir archivos de configuración y funciones
 include("../config/sesion.php");
 
 include("../config/functions.php");
 
+// Verificar si el usuario actual es un administrador
 isAdmin($user_id, $conn);
 
+// Si el ID de administrador no está en la sesión, redirigir al usuario a la página de inicio
 if (empty($_SESSION['admin_id'])) {
     header("Location: ../index.php"); // Redirigir al usuario al index.php
     exit(); // Detener la ejecución del script después de la redirección
 }
 
-// Inicializar variables de búsqueda
+// Inicializar variables de búsqueda con valores de la URL o cadenas vacías
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 $instructor = isset($_GET['instructor']) ? $_GET['instructor'] : '';
 $begin = isset($_GET['begin']) ? $_GET['begin'] : '';
 $duration = isset($_GET['duration']) ? $_GET['duration'] : '';
 
-/// Construir la URL base
+// Construir la URL base para la paginación
 $base_url = 'cursos.php';
 $query_string = '';
 
@@ -26,39 +29,42 @@ if (!empty($instructor)) $query_string .= '&instructor=' . urlencode($instructor
 if (!empty($begin)) $query_string .= '&role=' . urlencode($begin);
 if (!empty($duration)) $query_string .= '&duration=' . urlencode($duration);
 
-// Consulta base
+// Consulta base para seleccionar todos los cursos
 $query = "SELECT * FROM `cursos` WHERE 1";
 
-// Aplicar filtros
+// Aplicar filtros si se han proporcionado
 if (!empty($search)) $query .= " AND (title LIKE '%$search%' OR description LIKE '%$search%')";
 if (!empty($instructor)) $query .= " AND instructor = '$instructor'";
 if (!empty($begin)) $query .= " AND begin = '$begin'";
 if (!empty($duration)) $query .= " AND duration = '$duration'";
 
-// Ejecutar consulta
+// Ejecutar la consulta para obtener los cursos
 $get_courses = $conn->prepare($query);
 $get_courses->execute();
 
-// Obtener resultados
+// Obtener todos los resultados de la consulta
 $resultados = $get_courses->fetchAll();
 
-// Paginación
-$num_cursos_por_pagina = 3;
-$total_resultados = count($resultados);
-$total_paginas = ceil($total_resultados / $num_cursos_por_pagina);
-$pagina_actual = isset($_GET['pagina']) ? min(max(1, $_GET['pagina']), $total_paginas) : 1;
-$inicio = ($pagina_actual - 1) * $num_cursos_por_pagina;
-$resultados_paginados = array_slice($resultados, $inicio, $num_cursos_por_pagina);
+// Definir la paginación
+$num_cursos_por_pagina = 3; // Número de cursos por página
+$total_resultados = count($resultados); // Total de resultados
+$total_paginas = ceil($total_resultados / $num_cursos_por_pagina); // Total de páginas
+$pagina_actual = isset($_GET['pagina']) ? min(max(1, $_GET['pagina']), $total_paginas) : 1; // Página actual
+$inicio = ($pagina_actual - 1) * $num_cursos_por_pagina; // Índice de inicio para la paginación
+$resultados_paginados = array_slice($resultados, $inicio, $num_cursos_por_pagina); // Recortar resultados para la página actual
 
+// Procesar el formulario de agregar cursos si se ha enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $errors = array();
+    $errors = array(); // Inicializar un array para almacenar errores
 
+    // Recoger los datos del formulario
     $titulo = (isset($_POST["title"])) ? $_POST["title"] : NULL;
     $descripcion = (isset($_POST["description"])) ? $_POST["description"] : NULL;
     $instructor = (isset($_POST["instructor"])) ? $_POST["instructor"] : NULL;
     $empieza = (isset($_POST["begin"])) ? $_POST["begin"] : NULL;
     $duracion = (isset($_POST["duration"])) ? $_POST["duration"] : NULL;
 
+    // Validar los campos del formulario
     if (empty($titulo)) $errors['title'] = "El título es obligatorio.";
     if (empty($descripcion)) $errors['description'] = "La descripción es obligatoria.";
     if (empty($instructor)) $errors['instructor'] = "El instructor es obligatorio.";
@@ -69,10 +75,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (strlen($descripcion) > 255) $errors['description'] = "La descripción es demasiado larga.";
     if (strlen($instructor) > 255) $errors['instructor'] = "El instructor es demasiado largo.";
 
-    // Verificar si el instructor seleccionado es válido
+    // Verificar si el instructor seleccionado es válido consultando la base de datos
     $sql_instructor = $conn->prepare("SELECT id FROM `instructores` WHERE id = ?");
     $sql_instructor->execute([$instructor]);
 
+    // Si el instructor seleccionado no existe, agregar un error
     if ($sql_instructor->rowCount() == 0) $errors['instructor'] = "El instructor seleccionado no es válido.";
 
     // Verificar si la fecha seleccionada es válida y no es menor que la fecha actual
@@ -82,11 +89,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($duracion > 100) $errors['duration'] = "La duración no puede ser mayor que 100 semanas.";
 
+    // Si no hay errores, insertar el nuevo curso en la base de datos
     if (empty($errors)) {
         $sql = "INSERT INTO cursos (title, description, instructor, begin, duration) VALUES (:title, :description, :instructor, :begin, :duration)";
 
         $result = $conn->prepare($sql);
 
+        // Ejecutar la consulta preparada con los datos del formulario
         $result = $result->execute(array(
             ':title' => $titulo,
             ':description' => $descripcion,
@@ -95,6 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':duration' => $duracion,
         ));
 
+        // Redirigir de vuelta a la página de cursos después de agregar el curso
         header("Location: cursos.php");
     }
 }
