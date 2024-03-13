@@ -30,8 +30,11 @@ if ($select_profile->rowCount() > 0) $fetch_profile = $select_profile->fetch(PDO
     <h1>Dashboard</h1>
     <h2>Bienvenido, <?php echo $fetch_profile['name']; ?></h2>
 
-    <a href="años.php">Años</a>
+    <a href="cursos.php">Cursos</a>
     <a href="materias.php">Materias</a>
+    <a href="materiales.php">Materiales</a>
+    <a href="tareas.php">Tareas</a>
+    <a href="evaluaciones.php">Evaluaciones</a>
 </body>
 
 </html>
