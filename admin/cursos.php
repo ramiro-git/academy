@@ -51,7 +51,7 @@ if (empty($_SESSION['admin_id'])) {
             <label for="duration" class="formulario__label">Duración (en semanas):</label>
             <input class="formulario__input" type="number" name="duration" id="duration" required value="<?php echo isset($_POST['duration']) ? htmlspecialchars($_POST['duration']) : ''; ?>" />
 
-            <input class="formulario__submit" type="submit" value="Submit">
+            <input class="formulario__submit" type="submit" value="Añadir">
         </form>
     </div>
 </body>
