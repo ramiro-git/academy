@@ -17,7 +17,7 @@ $select_profile->execute([$user_id]);
 
 if ($select_profile->rowCount() > 0) {
     $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
-    $titulo_pagina = $fetch_profile['name'];
+    $page_title = $fetch_profile['name'];
 } else header("Location: index.php");
 
 $errors = array();
@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($password != $password_repeat) $errors['password_repeat'] = "Las contraseñas no coinciden";
 
-        $passwordHasheado = password_hash($password, PASSWORD_BCRYPT);
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
     }
 
     if (empty($errors)) {
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':user_id' => $user_id,
         );
 
-        if ($password !== NULL && $password_repeat !== NULL && empty($errors['password']) && empty($errors['password_repeat'])) $params[':password'] = $passwordHasheado;
+        if ($password !== NULL && $password_repeat !== NULL && empty($errors['password']) && empty($errors['password_repeat'])) $params[':password'] = $hashedPassword;
 
         $result->execute($params);
 
@@ -84,11 +84,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuario - <?php echo $titulo_pagina ?></title>
+    <title>Usuario - <?php echo $page_title ?></title>
 </head>
 
 <body>
-    <h1>Bienvenido, <?php echo $titulo_pagina; ?></h1>
+    <h1>Bienvenido, <?php echo $page_title; ?></h1>
 
     <form action="update.php" method="POST">
         <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>

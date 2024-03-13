@@ -29,6 +29,9 @@ if ($select_profile->rowCount() > 0) $fetch_profile = $select_profile->fetch(PDO
 <body>
     <h1>Dashboard</h1>
     <h2>Bienvenido, <?php echo $fetch_profile['name']; ?></h2>
+
+    <a href="años.php">Años</a>
+    <a href="materias.php">Materias</a>
 </body>
 
 </html>

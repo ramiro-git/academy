@@ -6,8 +6,10 @@ include("config/mails.php");
 
 if (isset($_GET['token'])) {
   $token = $_GET['token'];
+
   $select_user = $conn->prepare("SELECT * FROM `usuarios` WHERE token = ?");
   $select_user->execute([$token]);
+
   $row = $select_user->fetch(PDO::FETCH_ASSOC);
 
   if ($select_user->rowCount() > 0) {
@@ -36,14 +38,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error;
   else {
-    $passwordHasheado = password_hash($password, PASSWORD_BCRYPT);
+    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
     $sql = "UPDATE usuarios SET password = :password, token = '' WHERE id = :user_id";
 
     $result = $conn->prepare($sql);
 
     $result = $result->execute(array(
-      ':password' => $passwordHasheado,
+      ':password' => $hashedPassword,
       ':user_id' => $user_id
     ));
 

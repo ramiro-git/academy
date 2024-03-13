@@ -22,9 +22,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (strlen($nombre) > 255) $errors['name'] = "El nombre es demasiado largo.";
     if (strlen($apellido) > 255) $errors['surname'] = "El apellido es demasiado largo.";
 
-    $generosPermitidos = array("male", "female", "ratherNotSay");
+    $permitedGenders = array("male", "female", "ratherNotSay");
 
-    if (!in_array($genero, $generosPermitidos)) $errors['gender'] = "El género seleccionado no es válido.";
+    if (!in_array($genero, $permitedGenders)) $errors['gender'] = "El género seleccionado no es válido.";
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors['email'] = "El E-Mail tiene un formato inválido";
 
@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result_check_email['count'] > 0) $errors['email'] = "El correo electrónico ya está registrado.";
 
     if (empty($errors)) {
-        $passwordHasheado = password_hash($password, PASSWORD_BCRYPT);
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
         $sql = "INSERT INTO usuarios (name, surname, gender, email, password, role, active) VALUES (:name, :surname, :gender, :email, :password, :role, :active)";
 
@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':surname' => $apellido,
             ':gender' => $genero,
             ':email' => $email,
-            ':password' => $passwordHasheado,
+            ':password' => $hashedPassword,
             ':role' => 0,
             ':active' => 1
         ));
