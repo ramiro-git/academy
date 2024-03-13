@@ -64,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
     <link rel="stylesheet" href="build/css/app.css" />
+    <script src="build/js/app.js"></script>
 </head>
 
 <body>
@@ -71,10 +72,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
         Email:
-        <input type="email" name="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
+        <input type="email" name="email" id="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
 
         Password:
-        <input type="password" name="password" required />
+        <input type="password" name="password" id="password" required />
+
+        <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar contraseña</button>
 
         <button type="submit">Iniciar Sesión</button>
     </form>

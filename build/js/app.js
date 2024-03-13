@@ -1,0 +1,1 @@
+function togglePasswordVisibility(t,e){var n=document.getElementById(t),o=document.getElementById(e);"password"===n.type?(n.type="text",o.textContent="Ocultar contraseña"):(n.type="password",o.textContent="Mostrar contraseña")}

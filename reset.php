@@ -15,11 +15,7 @@ if (isset($_GET['token'])) {
   if ($select_user->rowCount() > 0) {
     $_SESSION['user_id'] = $row['id'];
   }
-}
-
-if (!isset($_SESSION['user_id'])) {
-  header('Location: index.php');
-}
+} else header('Location: index.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $errors = array();
@@ -69,7 +65,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
     Password:
-    <input type="password" name="password" required />
+    <input type="password" name="password" id="password" required />
+
+    <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar contraseña</button>
 
     Repetir Contraseña:
     <input type="password" name="password_repeat" id="password_repeat" required />

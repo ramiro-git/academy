@@ -75,6 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro</title>
     <link rel="stylesheet" href="build/css/app.css" />
+    <script src="build/js/app.js"></script>
 </head>
 
 <body>
@@ -102,8 +103,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         Contraseña:
         <input type="password" name="password" id="password" required />
 
+        <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar contraseña</button>
+
         Repetir Contraseña:
         <input type="password" name="password_repeat" id="password_repeat" required />
+
+        <button type="button" onclick="togglePasswordVisibility('password_repeat', 'password-repeat-visibility-toggle')">Mostrar contraseña</button>
 
         <button type="submit">Registrame</button>
     </form>
