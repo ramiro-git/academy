@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = (isset($_POST["password"])) ? $_POST["password"] : NULL;
     $password_repeat = (isset($_POST["password_repeat"])) ? $_POST["password_repeat"] : NULL;
 
-    if (empty($nombre)) $errors['name'] = "El  nombre es obligatorio.";
+    if (empty($nombre)) $errors['name'] = "El nombre es obligatorio.";
     if (empty($apellido)) $errors['surname'] = "El apellido es obligatorio.";
     if (empty($genero)) $errors['gender'] = "El género es obligatorio";
     if (empty($email)) $errors['email'] = "El E-Mail es obligatorio";
