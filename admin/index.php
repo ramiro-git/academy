@@ -24,12 +24,14 @@ if ($select_profile->rowCount() > 0) $fetch_profile = $select_profile->fetch(PDO
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="../build/css/app.css" />
 </head>
 
 <body>
     <h1>Dashboard</h1>
     <h2>Bienvenido, <?php echo $fetch_profile['name']; ?></h2>
 
+    <a href="usuarios.php">Usuarios</a>
     <a href="cursos.php">Cursos</a>
     <a href="materias.php">Materias</a>
     <a href="materiales.php">Materiales</a>

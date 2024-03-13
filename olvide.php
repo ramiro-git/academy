@@ -43,20 +43,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recuperar Contraseña</title>
+    <link rel="stylesheet" href="build/css/app.css" />
 </head>
 
 <body>
-    <form action="olvide.php" method="POST">
-        <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
+    <div class="bloques">
+        <form action="olvide.php" method="POST" class="formulario">
+            <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
-        Email:
-        <input type="email" name="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
+            <label for="email" class="formulario__label">Email:</label>
+            <input class="formulario__input" type="email" name="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
 
-        <button type="submit">Recuperar Contraseña</button>
-    </form>
+            <button class="formulario__submit" type="submit">Recuperar Contraseña</button>
+        </form>
 
-    <a href="login.php">¿Ya tienes cuenta? Iniciar Sesión</a>
-    <a href="registro.php">¿No tienes cuenta? Registrate</a>
+        <div class="acciones">
+            <a class="acciones__enlace" href="login.php">¿Ya tienes cuenta? Iniciar Sesión</a>
+            <a class="acciones__enlace" href="registro.php">¿No tienes cuenta? Registrate</a>
+        </div>
+    </div>
 </body>
 
 </html>

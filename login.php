@@ -68,22 +68,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-    <form action="login.php" method="POST">
-        <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
+    <div class="bloques">
+        <form action="login.php" method="POST" class="formulario">
+            <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
-        Email:
-        <input type="email" name="email" id="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
+            <label for="email" class="formulario__label">Email:</label>
+            <input class="formulario__input" type="email" name="email" id="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
 
-        Password:
-        <input type="password" name="password" id="password" required />
+            <label for="password" class="formulario__label">Contraseña:</label>
+            <input class="formulario__input" type="password" name="password" id="password" required />
 
-        <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar contraseña</button>
+            <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar</button>
 
-        <button type="submit">Iniciar Sesión</button>
-    </form>
+            <button type="submit" class="formulario__submit">Iniciar Sesión</button>
+        </form>
 
-    <a href="login.php">¿Ya tienes cuenta? Iniciar Sesión</a>
-    <a href="olvide.php">¿Olvidaste la contraseña? Recuperar Contraseña</a>
+        <div class="acciones">
+            <a class="acciones__enlace" href="login.php">¿Ya tienes cuenta? Iniciar Sesión</a>
+            <a class="acciones__enlace" href="olvide.php">¿Olvidaste la contraseña? Recuperar Contraseña</a>
+        </div>
+    </div>
 </body>
 
 </html>

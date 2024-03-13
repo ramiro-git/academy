@@ -1,0 +1,66 @@
+@use "base/variables" as v;
+@use "base/mixins" as m;
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table,
+th,
+td {
+  border: 1px solid #333;
+}
+
+th,
+td {
+  padding: 10px;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #ddd;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination a {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 0 10px;
+  background-color: #f2f2f2;
+  text-decoration: none;
+  color: v.$azul;
+  border-radius: 5px;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+
+.pagination a:hover {
+  background-color: v.$azul;
+  color: v.$blanco;
+  cursor: pointer;
+}
+
+.pagination a.active {
+  background-color: v.$azul;
+  color: v.$blanco;
+}
+
+.responsive {
+  max-width: 100%;
+  height: auto;
+}

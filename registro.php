@@ -81,40 +81,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <h2>Registrar Usuario</h2>
 
-    <form action="registro.php" method="POST" class="bordesFormulario">
-        <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
+    <div class="bloques">
+        <form action="registro.php" method="POST" class="formulario">
+            <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
-        Nombre:
-        <input type="text" name="name" id="name" required value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>" />
+            <label for="name" class="formulario__label">Nombre:</label>
+            <input class="formulario__input" type="text" name="name" id="name" required value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : ''; ?>" />
 
-        Apellido:
-        <input type="text" name="surname" id="surname" required value="<?php echo isset($_POST['surname']) ? htmlspecialchars($_POST['surname']) : ''; ?>" />
+            <label for="surname" class="formulario__label">Apellido:</label>
+            <input class="formulario__input" type="text" name="surname" id="surname" required value="<?php echo isset($_POST['surname']) ? htmlspecialchars($_POST['surname']) : ''; ?>" />
 
-        Género:
-        <select name="gender" id="gender">
-            <option value="male" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'male') ? 'selected' : ''; ?>>Masculino</option>
-            <option value="female" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'female') ? 'selected' : ''; ?>>Femenino</option>
-            <option value="ratherNotSay" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'ratherNotSay') ? 'selected' : ''; ?>>Prefiero no decirlo</option>
-        </select>
+            <label for="gender" class="formulario__label">Género:</label>
+            <select name="gender" id="gender" class="formulario__select">
+                <option value="male" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'male') ? 'selected' : ''; ?>>Masculino</option>
+                <option value="female" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'female') ? 'selected' : ''; ?>>Femenino</option>
+                <option value="ratherNotSay" <?php echo (isset($_POST['gender']) && $_POST['gender'] == 'ratherNotSay') ? 'selected' : ''; ?>>Prefiero no decirlo</option>
+            </select>
 
-        Email:
-        <input type="email" name="email" id="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
+            <label for="email" class="formulario__label">Email:</label>
+            <input class="formulario__input" type="email" name="email" id="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
 
-        Contraseña:
-        <input type="password" name="password" id="password" required />
+            <label for="password" class="formulario__label">Contraseña:</label>
+            <input class="formulario__input" type="password" name="password" id="password" required />
 
-        <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar contraseña</button>
+            <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar contraseña</button>
 
-        Repetir Contraseña:
-        <input type="password" name="password_repeat" id="password_repeat" required />
+            <label for="password_repeat" class="formulario__label">Repetir Contraseña:</label>
+            <input class="formulario__input" type="password" name="password_repeat" id="password_repeat" required />
 
-        <button type="button" onclick="togglePasswordVisibility('password_repeat', 'password-repeat-visibility-toggle')">Mostrar contraseña</button>
+            <button type="button" onclick="togglePasswordVisibility('password_repeat', 'password-repeat-visibility-toggle')">Mostrar contraseña</button>
 
-        <button type="submit">Registrame</button>
-    </form>
+            <button class="formulario__submit" type="submit">Registrame</button>
+        </form>
 
-    <a href="login.php">¿Ya tienes cuenta? Iniciar Sesión</a>
-    <a href="olvide.php">¿Olvidaste la contraseña? Recuperar Contraseña</a>
+        <div class="acciones">
+            <a class="acciones__enlace" href="login.php">¿Ya tienes cuenta? Iniciar Sesión</a>
+            <a class="acciones__enlace" href="olvide.php">¿Olvidaste la contraseña? Recuperar Contraseña</a>
+        </div>
+    </div>
 </body>
 
 </html>

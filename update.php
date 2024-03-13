@@ -85,43 +85,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuario - <?php echo $page_title ?></title>
+    <link rel="stylesheet" href="build/css/app.css" />
+    <script src="build/js/app.js"></script>
 </head>
 
 <body>
     <h1>Bienvenido, <?php echo $page_title; ?></h1>
 
-    <form action="update.php" method="POST">
-        <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
+    <div class="bloques">
+        <h4>Tipo de Usuario: <?= $fetch_profile['role'] == 1 ? "Administrador" : "Usuario" ?></h4>
+        
+        <form action="update.php" method="POST" class="formulario">
+            <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
-        Nombre:
-        <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($fetch_profile['name']); ?>" />
+            <label for="name" class="formulario__label">Nombre:</label>
+            <input class="formulario__input" type="text" name="name" id="name" value="<?php echo htmlspecialchars($fetch_profile['name']); ?>" />
 
-        Apellido:
-        <input type="text" name="surname" id="surname" value="<?php echo htmlspecialchars($fetch_profile['surname']); ?>" />
+            <label for="surname" class="formulario__label">Apellido:</label>
+            <input class="formulario__input" type="text" name="surname" id="surname" value="<?php echo htmlspecialchars($fetch_profile['surname']); ?>" />
 
-        Género:
-        <select name="gender" id="gender">
-            <option value="male" <?php if ($fetch_profile['gender'] === 'male') echo 'selected'; ?>>Masculino</option>
-            <option value="female" <?php if ($fetch_profile['gender'] === 'female') echo 'selected'; ?>>Femenino</option>
-            <option value="ratherNotSay" <?php if ($fetch_profile['gender'] === 'ratherNotSay') echo 'selected'; ?>>Prefiero no decirlo</option>
-        </select>
+            <label for="gender" class="formulario__label">Género:</label>
+            <select class="formulario__select" name="gender" id="gender">
+                <option value="male" <?php if ($fetch_profile['gender'] === 'male') echo 'selected'; ?>>Masculino</option>
+                <option value="female" <?php if ($fetch_profile['gender'] === 'female') echo 'selected'; ?>>Femenino</option>
+                <option value="ratherNotSay" <?php if ($fetch_profile['gender'] === 'ratherNotSay') echo 'selected'; ?>>Prefiero no decirlo</option>
+            </select>
 
-        Email:
-        <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($fetch_profile['email']); ?>" />
+            <label for="email" class="formulario__label">Email:</label>
+            <input class="formulario__input" type="email" name="email" id="email" value="<?php echo htmlspecialchars($fetch_profile['email']); ?>" />
 
-        Contraseña:
-        <input type="password" name="password" id="password" />
+            <label for="password" class="formulario__label">Contraseña:</label>
+            <input class="formulario__input" type="password" name="password" id="password" />
 
-        Repetir Contraseña:
-        <input type="password" name="password_repeat" id="password_repeat" />
+            <label for="password_repeat" class="formulario__label">Repetir Contraseña:</label>
+            <input class="formulario__input" type="password" name="password_repeat" id="password_repeat" />
 
-        Doble Factor:
-        <input type="checkbox" name="twoFactor" id="twoFactor" <?php if ($fetch_profile['twoFactor'] == 1) echo 'checked'; ?>>
+            <label for="twoFactor" class="formulario__label">Doble Factor</label>
+            <input class="formulario__radio" type="checkbox" name="twoFactor" id="twoFactor" <?php if ($fetch_profile['twoFactor'] == 1) echo 'checked'; ?>>
 
-        Tipo de Usuario: <?php echo $fetch_profile['role'] == 1 ? "Administrador" : "Usuario" ?>
-
-        <button type="submit">Actualizar Perfil</button>
-    </form>
+            <button class="formulario__submit" type="submit">Actualizar Perfil</button>
+        </form>
+    </div>
 </body>
 
 </html>

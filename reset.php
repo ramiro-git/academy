@@ -58,22 +58,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Recuperar Cuenta</title>
+  <link rel="stylesheet" href="build/css/app.css" />
+  <script src="build/js/app.js"></script>
 </head>
 
 <body>
-  <form action="reset.php" method="POST">
-    <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
+  <div class="bloques">
+    <form action="reset.php" method="POST" class="formulario">
+      <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
-    Password:
-    <input type="password" name="password" id="password" required />
+      <label for="password" class="formulario__label">Contraseña:</label>
+      <input class="formulario__input" type="password" name="password" id="password" required />
 
-    <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar contraseña</button>
+      <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar contraseña</button>
 
-    Repetir Contraseña:
-    <input type="password" name="password_repeat" id="password_repeat" required />
+      <label for="password_repeat" class="formulario__label">Repetir Contraseña:</label>
+      <input class="formulario__input" type="password" name="password_repeat" id="password_repeat" required />
 
-    <button type="submit">Confirmar</button>
-  </form>
+      <button type="button" onclick="togglePasswordVisibility('password_repeat', 'password-repeat-visibility-toggle')">Mostrar contraseña</button>
+
+      <button class="formulario__submit" type="submit">Confirmar</button>
+    </form>
+  </div>
 </body>
 
 </html>
