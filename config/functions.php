@@ -19,3 +19,11 @@ function isAdmin($user_id, $conn)
 
     // Si no se encontró ningún usuario con el ID proporcionado, $_SESSION['admin_id'] permanecerá vacío
 }
+
+function formatSizeUnits($bytes)
+{
+    // Convertir bytes a MB
+    $mb = $bytes / (1024 * 1024);
+    // Formatear el resultado con 5 decimales y agregar 'MB'
+    return number_format($mb, 5) . ' MB';
+}

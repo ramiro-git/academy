@@ -25,7 +25,7 @@ if (!empty($search)) $query_string .= '&search=' . urlencode($search);
 $query = "SELECT materias.*, cursos.title AS curso_nombre FROM materias LEFT JOIN cursos ON materias.curso_id = cursos.id WHERE 1";
 
 // Aplicar filtros si se han proporcionado
-if (!empty($search)) $query .= " AND (nombre LIKE '%$search%' OR apellido LIKE '%$search%' OR email LIKE '%$search%' OR dni LIKE '%$search%' OR especialidad LIKE '%$search%')";
+if (!empty($search)) $query .= " AND (materias.nombre LIKE '%$search%' OR cursos.title LIKE '%$search%')";
 
 // Ejecutar la consulta para obtener las inscripciones
 $get_inscriptions = $conn->prepare($query);
