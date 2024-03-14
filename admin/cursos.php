@@ -124,7 +124,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h2>Cursos</h2>
     <div class="bloques">
         <form class="formulario" method="GET" action="<?= $base_url ?>">
+            <label for="search" class="formulario__label">Título o Descripción:</label>
             <input class="formulario__input" type="text" name="search" placeholder="Ingrese el título o la descripción" value="<?= htmlspecialchars($search) ?>">
+
+            <label for="instructor" class="formulario__label">Instructor:</label>
             <select class="formulario__select" name="instructor">
                 <option value="">Todos</option>
                 <?php
@@ -136,7 +139,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 ?>
             </select>
+
+            <label for="begin" class="formulario__label">Comienzo:</label>
             <input class="formulario__input" type="date" name="begin" id="begin" value="<?= htmlspecialchars($begin) ?>">
+
+            <label for="duration" class="formulario__label">Duración:</label>
             <input class="formulario__input" type="number" name="duration" id="duration" value="<?= htmlspecialchars($duration) ?>">
 
             <button class="formulario__submit" type="submit">Buscar</button>

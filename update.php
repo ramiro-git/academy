@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="bloques">
         <h4>Tipo de Usuario: <?= $fetch_profile['role'] == 1 ? "Administrador" : "Usuario" ?></h4>
-        
+
         <form action="update.php" method="POST" class="formulario">
             <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
@@ -117,8 +117,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="password" class="formulario__label">Contraseña:</label>
             <input class="formulario__input" type="password" name="password" id="password" />
 
+            <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar contraseña</button>
+
             <label for="password_repeat" class="formulario__label">Repetir Contraseña:</label>
             <input class="formulario__input" type="password" name="password_repeat" id="password_repeat" />
+
+            <button type="button" onclick="togglePasswordVisibility('password_repeat', 'password-repeat-visibility-toggle')">Mostrar contraseña</button>
 
             <label for="twoFactor" class="formulario__label">Doble Factor</label>
             <input class="formulario__radio" type="checkbox" name="twoFactor" id="twoFactor" <?php if ($fetch_profile['twoFactor'] == 1) echo 'checked'; ?>>

@@ -114,7 +114,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="bloques">
         <form class="formulario" method="GET" action="<?= $base_url ?>">
+            <label for="search" class="formulario__label">Usuario o Curso:</label>
             <input class="formulario__input" type="text" name="search" placeholder="Ingrese el nombre del usuario o el título del curso" value="<?= htmlspecialchars($search) ?>">
+
             <button class="formulario__submit" type="submit">Buscar</button>
         </form>
 

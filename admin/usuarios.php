@@ -72,23 +72,31 @@ $resultados_paginados = array_slice($resultados, $inicio, $num_alumnos_por_pagin
 
     <div class="bloques">
         <form class="formulario" method="GET" action="<?= $base_url ?>">
+            <label for="search" class="formulario__label">Nombre o Email:</label>
             <input class="formulario__input" type="text" name="search" placeholder="Ingrese el nombre o email" value="<?= htmlspecialchars($search) ?>">
+
+            <label for="gender" class="formulario__label">Género:</label>
             <select class="formulario__select" name="gender">
                 <option value="">Todos</option>
                 <option value="male" <?= ($gender == 'male') ? 'selected' : '' ?>>Hombre</option>
                 <option value="female" <?= ($gender == 'female') ? 'selected' : '' ?>>Mujer</option>
                 <option value="ratherNotSay" <?= ($gender == 'ratherNotSay') ? 'selected' : '' ?>>Prefiere no decir</option>
             </select>
+
+            <label for="role" class="formulario__label">Roles:</label>
             <select class="formulario__select" name="role">
                 <option value="">Todos</option>
                 <option value="0" <?= ($role == '0') ? 'selected' : '' ?>>Usuario</option>
                 <option value="1" <?= ($role == '1') ? 'selected' : '' ?>>Administrador</option>
             </select>
+
+            <label for="active" class="formulario__label">Activo:</label>
             <select class="formulario__select" name="active">
                 <option value="">Todos</option>
                 <option value="1" <?= ($active == '1') ? 'selected' : '' ?>>Sí</option>
                 <option value="0" <?= ($active == '0') ? 'selected' : '' ?>>No</option>
             </select>
+            
             <button class="formulario__submit" type="submit">Buscar</button>
         </form>
 
