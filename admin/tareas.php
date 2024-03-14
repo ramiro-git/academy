@@ -13,6 +13,7 @@ if (empty($_SESSION['admin_id'])) {
 
 // Inicializar variables de búsqueda con valores de la URL o cadenas vacías
 $search = isset($_GET['search']) ? $_GET['search'] : '';
+$date = isset($_GET['date']) ? $_GET['date'] : '';
 
 // Construir la URL base para la paginación
 $base_url = 'tareas.php';
@@ -20,12 +21,24 @@ $query_string = '';
 
 // Agregar parámetros de búsqueda a la URL base
 if (!empty($search)) $query_string .= '&search=' . urlencode($search);
+if (!empty($date)) $query_string .= '&date=' . urlencode($date);
 
 // Consulta base para seleccionar todos las inscripciones
 $query = "SELECT * FROM tareas WHERE 1";
 
 // Aplicar filtros si se han proporcionado
-if (!empty($search)) $query .= " AND (materias.nombre LIKE '%$search%' OR cursos.title LIKE '%$search%')";
+if (!empty($search)) {
+    // Consultar la base de datos para obtener el ID de la materia
+    $query_materia_id = "SELECT id FROM materias WHERE nombre LIKE '%$search%'";
+    $get_materia_id = $conn->prepare($query_materia_id);
+    $get_materia_id->execute();
+    $materia_id = $get_materia_id->fetchColumn();
+
+    // Agregar el filtro a la consulta principal
+    $query .= " AND (nombre LIKE '%$search%' OR materia_id = '$materia_id')";
+}
+
+if (!empty($date)) $query .= " AND fecha_entrega = '$date'";
 
 // Ejecutar la consulta para obtener las inscripciones
 $get_inscriptions = $conn->prepare($query);
@@ -35,7 +48,7 @@ $get_inscriptions->execute();
 $resultados = $get_inscriptions->fetchAll();
 
 // Definir la paginación
-$num_inscripciones_por_pagina = 3; // Número de inscripciones por página
+$num_inscripciones_por_pagina = 1; // Número de inscripciones por página
 $total_resultados = count($resultados); // Total de resultados
 $total_paginas = ceil($total_resultados / $num_inscripciones_por_pagina); // Total de páginas
 $pagina_actual = isset($_GET['pagina']) ? min(max(1, $_GET['pagina']), $total_paginas) : 1; // Página actual
@@ -96,8 +109,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="bloques">
         <form class="formulario" method="GET" action="<?= $base_url ?>">
-            <label for="search" class="formulario__label">Nombre o Curso:</label>
-            <input class="formulario__input" type="text" name="search" placeholder="Ingrese el nombre o curso" value="<?= htmlspecialchars($search) ?>">
+            <label for="search" class="formulario__label">Nombre o Materia:</label>
+            <input class="formulario__input" type="text" name="search" placeholder="Ingrese el nombre o materia" value="<?= htmlspecialchars($search) ?>">
+
+            <label for="date" class="formulario__label">Fecha de Entrega:</label>
+            <input class="formulario__input" type="date" name="date" id="date" value="<?= htmlspecialchars($date) ?>">
 
             <button class="formulario__submit" type="submit">Buscar</button>
         </form>
