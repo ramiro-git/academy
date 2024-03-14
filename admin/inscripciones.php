@@ -11,6 +11,40 @@ if (empty($_SESSION['admin_id'])) {
     exit(); // Detener la ejecución del script después de la redirección
 }
 
+// Inicializar variables de búsqueda con valores de la URL o cadenas vacías
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
+// Construir la URL base para la paginación
+$base_url = 'inscripciones.php';
+$query_string = '';
+
+// Agregar parámetros de búsqueda a la URL base
+if (!empty($search)) $query_string .= '&search=' . urlencode($search);
+
+// Consulta base para seleccionar todos las inscripciones
+$query = "SELECT inscripciones.*, usuarios.name AS user_name, usuarios.surname AS user_lastname, cursos.title AS course_title FROM `inscripciones` 
+JOIN usuarios ON inscripciones.user_id = usuarios.id
+JOIN cursos ON inscripciones.course_id = cursos.id
+WHERE 1";
+
+// Aplicar filtros si se han proporcionado
+if (!empty($search)) $query .= " AND (usuarios.name LIKE '%$search%' OR usuarios.surname LIKE '%$search%' OR cursos.title LIKE '%$search%')";
+
+// Ejecutar la consulta para obtener las inscripciones
+$get_inscriptions = $conn->prepare($query);
+$get_inscriptions->execute();
+
+// Obtener todos los resultados de la consulta
+$resultados = $get_inscriptions->fetchAll();
+
+// Definir la paginación
+$num_inscripciones_por_pagina = 5; // Número de inscripciones por página
+$total_resultados = count($resultados); // Total de resultados
+$total_paginas = ceil($total_resultados / $num_inscripciones_por_pagina); // Total de páginas
+$pagina_actual = isset($_GET['pagina']) ? min(max(1, $_GET['pagina']), $total_paginas) : 1; // Página actual
+$inicio = ($pagina_actual - 1) * $num_inscripciones_por_pagina; // Índice de inicio para la paginación
+$resultados_paginados = array_slice($resultados, $inicio, $num_inscripciones_por_pagina); // Recortar resultados para la página actual
+
 // Procesar el formulario de agregar cursos si se ha enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $errors = array(); // Inicializar un array para almacenar errores
@@ -76,6 +110,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
+    <h2>Inscriptos</h2>
+
+    <div class="bloques">
+        <form class="formulario" method="GET" action="<?= $base_url ?>">
+            <input class="formulario__input" type="text" name="search" placeholder="Ingrese el nombre del usuario o el título del curso" value="<?= htmlspecialchars($search) ?>">
+            <button class="formulario__submit" type="submit">Buscar</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre del usuario</th>
+                    <th>Apellido del usuario</th>
+                    <th>Curso</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($resultados_paginados as $inscripcion) { ?>
+                    <tr>
+                        <td><?= $inscripcion['user_name']; ?></td>
+                        <td><?= $inscripcion['user_lastname']; ?></td>
+                        <td><?= $inscripcion['course_title']; ?></td>
+                        <td><a href="updateInscripcion?id=<?= $inscripcion["id"] ?>">Editar</a> <a href="deleteInscripcion?id=<?= $inscripcion['id'] ?>">Eliminar</a></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+
+        <?php if ($total_paginas > 1) { ?>
+            <div class='pagination'>
+                <?php if ($pagina_actual > 1) { ?>
+                    <a href='<?= "$base_url?pagina=1$query_string" ?>'> Primera </a>
+                    <a href='<?= "$base_url?pagina=" . ($pagina_actual - 1) . "$query_string" ?>'> Anterior </a>
+                <?php } ?>
+                <?php for ($i = 1; $i <= $total_paginas; $i++) { ?>
+                    <a <?= ($pagina_actual == $i) ? 'class="active"' : '' ?> href='<?= "$base_url?pagina=$i$query_string" ?>'><?= $i ?></a>
+                <?php } ?>
+                <?php if ($pagina_actual < $total_paginas) { ?>
+                    <a href='<?= "$base_url?pagina=" . ($pagina_actual + 1) . "$query_string" ?>'> Siguiente </a>
+                    <a href='<?= "$base_url?pagina=$total_paginas$query_string" ?>'> Última </a>
+                <?php } ?>
+            </div>
+        <?php } ?>
+    </div>
+
     <h2>Inscribir</h2>
 
     <div class="bloques">
