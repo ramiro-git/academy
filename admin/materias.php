@@ -22,7 +22,7 @@ $query_string = '';
 if (!empty($search)) $query_string .= '&search=' . urlencode($search);
 
 // Consulta base para seleccionar todos las inscripciones
-$query = "SELECT * FROM materias WHERE 1";
+$query = "SELECT materias.*, cursos.title AS curso_nombre FROM materias LEFT JOIN cursos ON materias.curso_id = cursos.id WHERE 1";
 
 // Aplicar filtros si se han proporcionado
 if (!empty($search)) $query .= " AND (nombre LIKE '%$search%' OR apellido LIKE '%$search%' OR email LIKE '%$search%' OR dni LIKE '%$search%' OR especialidad LIKE '%$search%')";
@@ -35,7 +35,7 @@ $get_inscriptions->execute();
 $resultados = $get_inscriptions->fetchAll();
 
 // Definir la paginación
-$num_inscripciones_por_pagina = 1; // Número de inscripciones por página
+$num_inscripciones_por_pagina = 3; // Número de inscripciones por página
 $total_resultados = count($resultados); // Total de resultados
 $total_paginas = ceil($total_resultados / $num_inscripciones_por_pagina); // Total de páginas
 $pagina_actual = isset($_GET['pagina']) ? min(max(1, $_GET['pagina']), $total_paginas) : 1; // Página actual
@@ -105,11 +105,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($resultados_paginados as $instructor) { ?>
+                <?php foreach ($resultados_paginados as $materia) { ?>
                     <tr>
-                        <td><?= $instructor['nombre']; ?></td>
-                        <td><?= $instructor['apellido']; ?></td>
-                        <td><a href="updateInstructor?id=<?= $instructor["id"] ?>">Editar</a> <a href="deleteInstructor?id=<?= $instructor['id'] ?>">Eliminar</a></td>
+                        <td><?= $materia['nombre']; ?></td>
+                        <td><?= $materia['curso_nombre']; ?></td>
+                        <td><a href="updateInstructor?id=<?= $materia["id"] ?>">Editar</a> <a href="deleteInstructor?id=<?= $materia['id'] ?>">Eliminar</a></td>
                     </tr>
                 <?php } ?>
             </tbody>
