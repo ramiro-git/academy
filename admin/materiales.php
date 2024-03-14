@@ -13,6 +13,7 @@ if (empty($_SESSION['admin_id'])) {
 
 // Inicializar variables de búsqueda con valores de la URL o cadenas vacías
 $search = isset($_GET['search']) ? $_GET['search'] : '';
+$date = isset($_GET['date']) ? $_GET['date'] : '';
 
 // Construir la URL base para la paginación
 $base_url = 'materiales.php';
@@ -20,12 +21,24 @@ $query_string = '';
 
 // Agregar parámetros de búsqueda a la URL base
 if (!empty($search)) $query_string .= '&search=' . urlencode($search);
+if (!empty($date)) $query_string .= '&date=' . urlencode($date);
 
 // Consulta base para seleccionar todos las inscripciones
 $query = "SELECT * FROM materiales WHERE 1";
 
 // Aplicar filtros si se han proporcionado
-if (!empty($search)) $query .= " AND (materias.nombre LIKE '%$search%' OR cursos.title LIKE '%$search%')";
+if (!empty($search)) {
+    // Consultar la base de datos para obtener el ID de la materia
+    $query_materia_id = "SELECT id FROM materias WHERE nombre LIKE '%$search%'";
+    $get_materia_id = $conn->prepare($query_materia_id);
+    $get_materia_id->execute();
+    $materia_id = $get_materia_id->fetchColumn();
+
+    // Agregar el filtro a la consulta principal
+    $query .= " AND (nombre_archivo LIKE '%$search%' OR materia_id = '$materia_id')";
+}
+
+if (!empty($date)) $query .= " AND fecha = '$date'";
 
 // Ejecutar la consulta para obtener las inscripciones
 $get_inscriptions = $conn->prepare($query);
@@ -120,6 +133,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="search" class="formulario__label">Nombre o Materia</label>
             <input class="formulario__input" type="text" name="search" placeholder="Ingrese el nombre o materia" value="<?= htmlspecialchars($search) ?>">
 
+            <label for="date" class="formulario__label">Fecha:</label>
+            <input class="formulario__input" type="date" name="date" id="date" value="<?= htmlspecialchars($date) ?>">
+
             <button class="formulario__submit" type="submit">Buscar</button>
         </form>
 
@@ -139,7 +155,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php foreach ($resultados_paginados as $materiales) { ?>
                     <tr>
                         <td><?= $materiales['nombre_archivo']; ?></td>
-                        <td><?= $materiales['tipo_lectura']; ?></td>
+                        <td><?= ucfirst($materiales['tipo_lectura']); ?></td>
                         <td><?= $materiales['fecha']; ?></td>
                         <td><?= formatSizeUnits($materiales['tamano']); ?></td>
                         <td>
@@ -193,7 +209,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </select>
 
             <label for="archivo" class="formulario__label">Archivo:</label>
-            <input class="formulario__input" type="file" name="archivo" id="archivo" accept=".pdf, .xls, .xlsx, .doc, .docx">
+            <input class="formulario__input" type="file" name="archivo" id="archivo">
 
             <label for="materia" class="formulario__label">Materia:</label>
             <select class="formulario__input" name="materia" id="materia">
@@ -206,9 +222,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $materias = $get_cursos->fetchAll();
 
                 // Iterar sobre los resultados y construir las opciones del select
-                foreach ($materias as $materia) {
-                    echo "<option value='" . $materia['id'] . "'>" . $materia['nombre'] . "</option>";
-                }
+                foreach ($materias as $materia) echo "<option value='" . $materia['id'] . "'>" . $materia['nombre'] . "</option>";
                 ?>
             </select>
 
