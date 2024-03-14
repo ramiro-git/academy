@@ -60,57 +60,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $errors = array(); // Inicializar un array para almacenar errores
 
     // Recoger los datos del formulario
-    $nombre_archivo = (isset($_POST["nombre_archivo"])) ? $_POST["nombre_archivo"] : NULL;
-    $tipo_lectura = (isset($_POST["tipo"])) ? $_POST["tipo"] : NULL;
-    $archivo_temporal = $_FILES['archivo']['tmp_name'];
-    $archivo_nombre = $_FILES['archivo']['name'];
+    $nombre = (isset($_POST["nombre"])) ? $_POST["nombre"] : NULL;
+    $descripcion = (isset($_POST["descripcion"])) ? $_POST["descripcion"] : NULL;
+    $hora_inicio = (isset($_POST["hora_inicio"])) ? $_POST["hora_inicio"] : NULL;
+    $hora_fin = (isset($_POST["hora_fin"])) ? $_POST["hora_fin"] : NULL;
+    $intentos = (isset($_POST["intentos"])) ? $_POST["intentos"] : NULL;
+    $ponderacion = (isset($_POST["ponderacion"])) ? $_POST["ponderacion"] : NULL;
+    $tipo = (isset($_POST["tipo"])) ? $_POST["tipo"] : NULL;
+    $estado = (isset($_POST["estado"])) ? $_POST["estado"] : NULL;
+    $instrucciones = (isset($_POST["instrucciones"])) ? $_POST["instrucciones"] : NULL;
     $materia_id = (isset($_POST["materia"])) ? $_POST["materia"] : NULL;
 
     // Validar los campos del formulario
-    if (empty($nombre_archivo)) $errors[] = "El nombre del archivo es obligatorio.";
-    if (empty($tipo_lectura)) $errors[] = "El tipo de lectura es obligatorio.";
+    if (empty($nombre)) $errors['nombre'] = "El nombre es obligatorio.";
+    if (empty($descripcion)) $errors['descripcion'] = "La descripcion de lectura es obligatoria.";
     if (empty($materia_id)) $errors[] = "La materia es obligatoria.";
 
-    if (strlen($nombre_archivo) > 255) $errors['nombre_archivo'] = "El nombre es demasiado largo.";
-    if (strlen($tipo_lectura) > 255) $errors['tipo_lectura'] = "El tipo de lectura es demasiado largo.";
-
-    // Verificar si se ha subido un archivo
-    if (!isset($_FILES['archivo']) || $_FILES['archivo']['error'] === UPLOAD_ERR_NO_FILE) $errors[] = "Por favor, seleccione un archivo.";
-    else {
-        // Obtener la extensión del archivo
-        $extension = strtolower(pathinfo($archivo_nombre, PATHINFO_EXTENSION));
-
-        // Verificar si la extensión es válida
-        $extensiones_validas = array("pdf", "xls", "xlsx", "doc", "docx");
-
-        if (!in_array($extension, $extensiones_validas)) $errors[] = "La extensión del archivo no es válida. Por favor, seleccione un archivo PDF, Excel o Word.";
-    }
+    if (strlen($nombre) > 255) $errors['nombre'] = "El nombre es demasiado largo.";
+    if (strlen($tipo) > 255) $errors['tipo'] = "El tipo de evaluación es demasiado largo.";
 
     // Si no hay errores, procede a subir el archivo y guardar en la base de datos
     if (empty($errors)) {
-        // Establecer la ruta de destino para la subida del archivo
-        $directorio_destino = $_SERVER['DOCUMENT_ROOT'] . "/academia/uploads/";
+        // Convertir las horas de inicio y fin en objetos DateTime
+        $hora_inicio_dt = new DateTime($hora_inicio);
+        $hora_fin_dt = new DateTime($hora_fin);
 
-        // Comprobar si el directorio de destino existe, si no, intenta crearlo
-        if (!file_exists($directorio_destino)) mkdir($directorio_destino, 0777, true); // Crea el directorio recursivamente con permisos de escritura
+        // Calcular la diferencia entre las horas de inicio y fin
+        $duracion_estimada = $hora_inicio_dt->diff($hora_fin_dt)->format('%H:%I:%S');
 
-        // Generar un nombre único para el archivo
-        $archivo_destino = $directorio_destino . uniqid() . "_" . $archivo_nombre;
+        $sql = "INSERT INTO evaluaciones (nombre, descripcion, hora_inicio, hora_fin, intentos_permitidos, ponderacion, duracion_estimada, tipo_evaluacion, estado, instrucciones, materia_id) VALUES (:nombre, :descripcion, :hora_inicio, :hora_fin, :intentos_permitidos, :ponderacion, :duracion_estimada, :tipo_evaluacion, :estado, :instrucciones, :materia_id)";
 
-        if (move_uploaded_file($archivo_temporal, $archivo_destino)) {
-            // Obtener el tamaño del archivo
-            $tamano = filesize($archivo_destino);
+        $result = $conn->prepare($sql);
 
-            // Insertar los datos en la base de datos
-            $sql = "INSERT INTO materiales (nombre_archivo, tipo_lectura, archivo, tamano, materia_id) VALUES (?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(1, $nombre_archivo);
-            $stmt->bindParam(2, $tipo_lectura);
-            $stmt->bindParam(3, $archivo_destino);
-            $stmt->bindParam(4, $tamano);
-            $stmt->bindParam(5, $materia_id);
-            $stmt->execute();
-        } else $errors[] = "Error al subir el archivo. Por favor, inténtalo de nuevo.";
+        // Ejecutar la consulta preparada con los datos del formulario
+        $result = $result->execute(array(
+            ':nombre' => $nombre,
+            ':descripcion' => $descripcion,
+            ':hora_inicio' => $hora_inicio,
+            ':hora_fin' => $hora_fin,
+            ':intentos_permitidos' => $intentos,
+            ':ponderacion' => $ponderacion,
+            ':duracion_estimada' => $duracion_estimada,
+            ':tipo_evaluacion' => $tipo,
+            ':estado' => $estado,
+            ':instrucciones' => $instrucciones,
+            ':materia_id' => $materia_id
+        ));
+
+        // Redirigir de vuelta a la página de cursos después de agregar el curso
+        header("Location: evaluaciones.php");
     }
 }
 ?>
@@ -156,23 +154,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($resultados_paginados as $materiales) { ?>
+                <?php foreach ($resultados_paginados as $evaluaciones) { ?>
                     <tr>
-                        <td><?= $materiales['nombre_archivo']; ?></td>
-                        <td><?= ucfirst($materiales['tipo_lectura']); ?></td>
-                        <td><?= $materiales['fecha']; ?></td>
-                        <td><?= formatSizeUnits($materiales['tamano']); ?></td>
+                        <td><?= $evaluaciones['nombre']; ?></td>
+                        <td><?= $evaluaciones['hora_inicio']; ?></td>
+                        <td><?= $evaluaciones['hora_fin']; ?></td>
+                        <td><?= $evaluaciones['intentos_permitidos']; ?></td>
+                        <td><?= $evaluaciones['ponderacion']; ?></td>
+                        <td><?= $evaluaciones['duracion_estimada']; ?></td>
+                        <td><?= ucfirst($evaluaciones['tipo_evaluacion']); ?></td>
+                        <td><?= ucfirst($evaluaciones['estado']); ?></td>
+                        <td><?= $evaluaciones['instrucciones']; ?></td>
                         <td>
                             <?php
                             // Consultar la base de datos para obtener el nombre de la materia
                             $query_materia = "SELECT nombre FROM materias WHERE id = ?";
                             $get_materia = $conn->prepare($query_materia);
-                            $get_materia->execute([$materiales['materia_id']]);
+                            $get_materia->execute([$evaluaciones['materia_id']]);
                             $materia = $get_materia->fetchColumn();
                             echo $materia;
                             ?>
                         </td>
-                        <td><a href="<?= '../uploads/' . basename($materiales['archivo']) ?>" download>Descargar</a></td>
                         <td><a href="updateInstructor?id=<?= $materiales["id"] ?>">Editar</a> <a href="deleteInstructor?id=<?= $materiales['id'] ?>">Eliminar</a></td>
                     </tr>
                 <?php } ?>
@@ -217,7 +219,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="intentos" class="formulario__label">Intentos Permitidos:</label>
             <input class="formulario__input" type="number" name="intentos" id="intentos" value="<?php echo isset($_POST['intentos']) ? htmlspecialchars($_POST['intentos']) : ''; ?>" />
 
-            
+            <label for="ponderacion" class="formulario__label">Ponderación:</label>
+            <input class="formulario__input" type="number" name="ponderacion" id="ponderacion" value="<?php echo isset($_POST['ponderacion']) ? htmlspecialchars($_POST['ponderacion']) : ''; ?>" />
+
+            <label for="tipo" class="formulario__label">Tipo de Evaluación:</label>
+            <select class="formulario__input" name="tipo" id="tipo">
+                <option value="" disabled>Seleccione un tipo de evaluación</option>
+                <option value="examen">Examen</option>
+                <option value="cuestionario">Cuestionario</option>
+                <option value="proyecto">Proyecto</option>
+                <option value="otro">Otro</option>
+            </select>
+
+            <label for="estado" class="formulario__label">Estado de Evaluación:</label>
+            <select class="formulario__input" name="estado" id="estado">
+                <option value="" disabled>Seleccione un estado de evaluación</option>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+                <option value="programado">Programado</option>
+            </select>
+
+            <label for="instrucciones" class="formulario__label">Instrucciones:</label>
+            <input class="formulario__input" type="text" name="instrucciones" id="instrucciones" value="<?php echo isset($_POST['instrucciones']) ? htmlspecialchars($_POST['instrucciones']) : ''; ?>" />
+
+            <label for="materia" class="formulario__label">Materia:</label>
+            <select class="formulario__input" name="materia" id="materia">
+                <option value="" disabled>Seleccione una materia</option>
+                <?php
+                // Consultar la base de datos para obtener todos los cursos
+                $query_cursos = "SELECT * FROM materias";
+                $get_cursos = $conn->prepare($query_cursos);
+                $get_cursos->execute();
+                $materias = $get_cursos->fetchAll();
+
+                // Iterar sobre los resultados y construir las opciones del select
+                foreach ($materias as $materia) echo "<option value='" . $materia['id'] . "'>" . $materia['nombre'] . "</option>";
+                ?>
+            </select>
 
             <input class="formulario__submit" type="submit" value="Añadir">
         </form>
