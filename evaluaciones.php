@@ -25,8 +25,8 @@ $query = "SELECT
             evaluaciones.nombre,
             evaluaciones.intentos_permitidos, 
             CASE 
-                WHEN evaluaciones.estado = 'activo' AND CURTIME() BETWEEN evaluaciones.hora_inicio AND evaluaciones.hora_fin THEN 'Deshabilitado'
-                ELSE 'Habilitado'
+                WHEN evaluaciones.estado = 'activo' AND CURTIME() BETWEEN evaluaciones.hora_inicio AND evaluaciones.hora_fin THEN 'Habilitado'
+                ELSE 'Deshabilitado'
             END AS estado_evaluacion
           FROM 
             evaluaciones
@@ -40,6 +40,11 @@ $get_evaluations->bindParam(':user_id', $user_id);
 $get_evaluations->execute();
 
 $evaluations = $get_evaluations->fetchAll();
+
+// Verificar si el usuario ya ha completado alguna evaluación
+$select_completed_evaluations = $conn->prepare("SELECT DISTINCT evaluacion_id FROM respuestas_alumnos WHERE user_id = ?");
+$select_completed_evaluations->execute([$user_id]);
+$completed_evaluations = $select_completed_evaluations->fetchAll(PDO::FETCH_COLUMN);
 ?>
 
 <!DOCTYPE html>
@@ -55,16 +60,23 @@ $evaluations = $get_evaluations->fetchAll();
     <ul>
         <?php foreach ($evaluations as $evaluation) : ?>
             <li>
-                <strong>Nombre:</strong> <?= $evaluation['nombre'] ?><br>
-                <strong>Intentos Permitidos:</strong> <?= $evaluation['intentos_permitidos'] ?><br>
-                <strong>Estado:</strong> <?= $evaluation['estado_evaluacion'] ?>
-                <?php if ($evaluation['estado_evaluacion'] === 'Habilitado') : ?>
-                    <button>Iniciar evaluación</button>
+                <!-- Resto del código... -->
+                <?php if ($evaluation['estado_evaluacion'] === 'Habilitado' && !in_array($evaluation['id'], $completed_evaluations)) : ?>
+                    <form method="post" action="evaluacion.php">
+                        <input type="hidden" name="evaluation_id" value="<?= $evaluation['id'] ?>">
+                        <button type="submit">Iniciar evaluación</button>
+                    </form>
                 <?php endif; ?>
             </li>
             <hr>
         <?php endforeach; ?>
     </ul>
+
+    <script>
+        function iniciarEvaluacion(id) {
+            window.location.href = 'evaluacion.php?id=' + id; // Reemplaza 'evaluacion.php' por la URL real de tu página de evaluación.
+        }
+    </script>
 </body>
 
 </html>
