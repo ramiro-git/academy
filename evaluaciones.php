@@ -76,6 +76,20 @@ $completed_evaluations = $select_completed_evaluations->fetchAll(PDO::FETCH_COLU
         function iniciarEvaluacion(id) {
             window.location.href = 'evaluacion.php?id=' + id; // Reemplaza 'evaluacion.php' por la URL real de tu página de evaluación.
         }
+
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+
+        // Detectar si la ventana se cierra o se recarga
+        window.addEventListener('beforeunload', function(e) {
+            // Enviar los datos si la evaluación está en curso
+            if (<?= json_encode(isset($evaluation_id)) ?>) {
+                e.preventDefault();
+                e.returnValue = '';
+                document.getElementById("evaluationForm").submit();
+            }
+        });
     </script>
 </body>
 

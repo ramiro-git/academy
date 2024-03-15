@@ -6,6 +6,9 @@ if (empty($user_id)) {
     exit();
 }
 
+$token = bin2hex(random_bytes(32));
+$_SESSION['evaluation_token'] = $token;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['evaluation_id'])) {
     $evaluation_id = $_POST['evaluation_id'];
     $_SESSION['evaluation_id'] = $evaluation_id;
@@ -30,13 +33,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['evaluation_id'])) {
         $select_questions = $conn->prepare("SELECT * FROM preguntas WHERE evaluacion_id = ?");
         $select_questions->execute([$evaluation_id]);
         $questions = $select_questions->fetchAll();
+
+        // Insertar automáticamente en la tabla respuestas_alumnos
+        $insert_response = $conn->prepare("INSERT INTO respuestas_alumnos (evaluacion_id, user_id) VALUES (?, ?)");
+        $insert_response->execute([$evaluation_id, $user_id]);
     } else {
         // Si no se encuentra la evaluación, redirigir a la página de evaluaciones
         header("Location: evaluaciones.php");
         exit();
     }
 } else {
-    // Si no se ha establecido el ID de la evaluación en la sesión, redirigir al usuario nuevamente a la página de evaluaciones
+    // Si no se ha establecido el ID de la evaluación en el formulario, redirigir al usuario nuevamente a la página de evaluaciones
     header("Location: evaluaciones.php");
     exit();
 }
@@ -54,14 +61,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['evaluation_id'])) {
 <body>
     <h1><?= $evaluation_name ?></h1>
     <p><strong>Descripción:</strong> <?= $description ?></p>
-    <p><strong>Ponderación:</strong> <?= $weight ?></p>
+    <p><strong>Ponderación:</strong> <?= $weight ?>%</p>
     <p><strong>Duración estimada:</strong> <?= $duration ?></p>
     <p><strong>Instrucciones:</strong> <?= $instructions ?></p>
 
     <div id="timer"></div>
 
     <h2>Preguntas:</h2>
-    <form id="evaluationForm" action="procesar_respuestas.php" method="post">
+    <form action="procesar_respuestas.php" method="post" id="evaluationForm">
+        <input type="hidden" name="evaluation_id" value="<?= $evaluation_id ?>">
+        <input type="hidden" name="security_token" value="<?= $token ?>">
         <input type="hidden" name="evaluation_id" value="<?= $evaluation_id ?>">
         <ol>
             <?php foreach ($questions as $question) : ?>
