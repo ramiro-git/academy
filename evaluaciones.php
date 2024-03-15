@@ -21,11 +21,12 @@ if ($select_profile->rowCount() > 0) {
 } else header("Location: index.php");
 
 $query = "SELECT 
+            evaluaciones.id,
             evaluaciones.nombre,
-            evaluaciones.intentos_permitidos,
+            evaluaciones.intentos_permitidos, 
             CASE 
-                WHEN evaluaciones.estado = 'activo' AND CURTIME() BETWEEN evaluaciones.hora_inicio AND evaluaciones.hora_fin THEN 'Habilitado'
-                ELSE 'Deshabilitado'
+                WHEN evaluaciones.estado = 'activo' AND CURTIME() BETWEEN evaluaciones.hora_inicio AND evaluaciones.hora_fin THEN 'Deshabilitado'
+                ELSE 'Habilitado'
             END AS estado_evaluacion
           FROM 
             evaluaciones
@@ -57,6 +58,9 @@ $evaluations = $get_evaluations->fetchAll();
                 <strong>Nombre:</strong> <?= $evaluation['nombre'] ?><br>
                 <strong>Intentos Permitidos:</strong> <?= $evaluation['intentos_permitidos'] ?><br>
                 <strong>Estado:</strong> <?= $evaluation['estado_evaluacion'] ?>
+                <?php if ($evaluation['estado_evaluacion'] === 'Habilitado') : ?>
+                    <button>Iniciar evaluación</button>
+                <?php endif; ?>
             </li>
             <hr>
         <?php endforeach; ?>
