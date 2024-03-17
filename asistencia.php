@@ -6,7 +6,7 @@ if ($user_id == '') {
     exit();
 }
 
-$select_teacher = $conn->prepare("SELECT * FROM `materias` WHERE instructor = ?");
+$select_teacher = $conn->prepare("SELECT materias.*, cursos.title AS nombre_curso FROM `materias` INNER JOIN `cursos` ON materias.curso_id = cursos.id WHERE materias.instructor = ?");
 $select_teacher->execute([$user_id]);
 
 if ($select_teacher->rowCount() > 0) {
@@ -17,48 +17,44 @@ if ($select_teacher->rowCount() > 0) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Iterate through each subject for attendance marking
+    // Get the current date and time
+    $fecha = date("Y-m-d");
+    $hora = date("H:i:s");
+
     foreach ($subjects as $subject) {
-        // Get the current date and time
-        $fecha = date("Y-m-d");
-        $hora = date("H:i:s");
+        if (isset($_POST['attendance'][$subject['id']])) {
+            // Get enrolled students for the current subject
+            $select_enrolled_students = $conn->prepare("SELECT usuarios.* FROM `inscripciones_materias` INNER JOIN `usuarios` ON inscripciones_materias.user_id = usuarios.id WHERE inscripciones_materias.materia_id = ?");
+            $select_enrolled_students->execute([$subject['id']]);
+            $enrolled_students = $select_enrolled_students->fetchAll(PDO::FETCH_ASSOC);
 
-        // Get enrolled students for the current subject
-        $select_enrolled_students = $conn->prepare("SELECT usuarios.* FROM `inscripciones_materias` INNER JOIN `usuarios` ON inscripciones_materias.user_id = usuarios.id WHERE inscripciones_materias.materia_id = ?");
-        $select_enrolled_students->execute([$subject['id']]);
-        $enrolled_students = $select_enrolled_students->fetchAll(PDO::FETCH_ASSOC);
+            // Initialize arrays to store present and absent student IDs for this subject
+            $presentes = [];
+            $ausentes = [];
 
-        // Initialize arrays to store present and absent student IDs
-        $presentes = [];
-        $ausentes = [];
-
-        // Loop through enrolled students to determine their attendance status
-        foreach ($enrolled_students as $student) {
-            // Check if the student is marked present
-            if (isset($_POST['attendance'][$student['id']])) {
-                $presentes[] = $student['id'];
-            } else {
-                $ausentes[] = $student['id'];
+            // Loop through enrolled students to determine their attendance status for this subject
+            foreach ($enrolled_students as $student) {
+                // Check if the student is marked present for this subject
+                if (isset($_POST['attendance'][$subject['id']][$student['id']])) {
+                    $presentes[] = $student['id'];
+                } else {
+                    $ausentes[] = $student['id'];
+                }
             }
+
+            // Convert arrays to comma-separated strings
+            $presentes_str = implode(",", $presentes);
+            $ausentes_str = implode(",", $ausentes);
+
+            // Insert attendance record for this subject into the database
+            $insert_attendance = $conn->prepare("INSERT INTO `asistencia` (`materia_id`, `curso_id`, `fecha`, `hora`, `presentes`, `ausentes`) VALUES (?, ?, ?, ?, ?, ?)");
+            $insert_attendance->execute([$subject['id'], $subject['curso_id'], $fecha, $hora, $presentes_str, $ausentes_str]);
         }
-
-        // Convert arrays to comma-separated strings
-        $presentes_str = implode(",", $presentes);
-        $ausentes_str = implode(",", $ausentes);
-
-        // Query to fetch course details based on subject ID
-        $select_course = $conn->prepare("SELECT * FROM `cursos` WHERE id = ?");
-        $select_course->execute([$subject['curso_id']]);
-        $course = $select_course->fetch(PDO::FETCH_ASSOC);
-
-        // Insert attendance record into the database
-        $insert_attendance = $conn->prepare("INSERT INTO `asistencia` (`materia_id`, `curso_id`, `fecha`, `hora`, `presentes`, `ausentes`) VALUES (?, ?, ?, ?, ?, ?)");
-        $insert_attendance->execute([$subject['id'], $course['id'], $fecha, $hora, $presentes_str, $ausentes_str]);
-
-        // Redirect back to the attendance page for this subject
-        header("Location: asistencia.php?id={$subject['id']}");
-        exit();
     }
+
+    // Redirect back to the attendance page
+    header("Location: asistencia.php");
+    exit();
 }
 ?>
 
@@ -74,12 +70,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <?php foreach ($subjects as $subject) : ?>
         <h1>Asistencia - Materia: <?php echo $subject['nombre']; ?></h1>
+        <h2>Curso: <?php echo $subject['nombre_curso']; ?></h2>
         <h2>Alumnos Inscritos:</h2>
-        <!-- Form to mark attendance -->
+        <!-- Formulario para marcar asistencia para esta materia -->
         <form method="post">
             <h2>Marcar Asistencia:</h2>
             <ul>
-                <!-- Loop through enrolled students for the current subject -->
+                <!-- Recorrer estudiantes inscritos para esta materia -->
                 <?php
                 $select_enrolled_students = $conn->prepare("SELECT usuarios.* FROM `inscripciones_materias` INNER JOIN `usuarios` ON inscripciones_materias.user_id = usuarios.id WHERE inscripciones_materias.materia_id = ?");
                 $select_enrolled_students->execute([$subject['id']]);
@@ -88,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 foreach ($enrolled_students as $student) : ?>
                     <li>
                         <label>
-                            <input type="checkbox" name="attendance[<?php echo $student['id']; ?>]">
+                            <input type="checkbox" name="attendance[<?php echo $subject['id']; ?>][<?php echo $student['id']; ?>]">
                             <?php echo $student['name']; ?>
                         </label>
                     </li>
