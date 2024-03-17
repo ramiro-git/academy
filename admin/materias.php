@@ -191,18 +191,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ?>
             </select>
 
-            <?php $sql = $conn->prepare("SELECT id, nombre FROM instructores");
-            $sql->execute();
-            if ($sql->rowCount() > 0) {
-                echo "<label for='instructor' class='formulario__label'>Instructor:</label> <select class='formulario__select' name='instructor'>";
-                while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-                    echo "<option value='" . $row["id"] . "'>" . $row["nombre"] . "</option>";
+            <label for='instructor' class='formulario__label'>Instructor:</label>
+            <select class='formulario__select' name='instructor' id='instructor'> <!-- Asegúrate de que el select tenga un id -->
+                <?php
+                $sql = $conn->prepare("SELECT id, nombre FROM instructores");
+                $sql->execute();
+                if ($sql->rowCount() > 0) {
+                    while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+                        echo "<option value='" . $row["id"] . "'>" . $row["nombre"] . "</option>";
+                    }
+                } else {
+                    echo "<option value='' disabled>No hay instructores disponibles</option>";
                 }
-                echo "</select>";
-            } else {
-                echo "No hay instructores disponibles.";
-            }
-            ?>
+                ?>
+            </select>
 
             <input class="formulario__submit" type="submit" value="Añadir">
         </form>
