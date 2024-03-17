@@ -21,8 +21,10 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-terser-js": "^5.2.2",
     "gulp-webp": "^5.0.0",
-    "sass": "^1.71.1"
+    "sass": "^1.71.1",
+    "glob-parent": ">=5.1.2",
+    "semver-regex": ">=3.1.4",
+    "http-cache-semantics": ">=4.1.1"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Si no hay errores, procede a subir el archivo y guardar en la base de datos
     if (empty($errors)) {
         // Establecer la ruta de destino para la subida del archivo
-        $directorio_destino = $_SERVER['DOCUMENT_ROOT'] . "/academia/uploads/";
+        $directorio_destino = $_SERVER['DOCUMENT_ROOT'] . "/academia/uploads/materiales/";
 
         // Comprobar si el directorio de destino existe, si no, intenta crearlo
         if (!file_exists($directorio_destino)) mkdir($directorio_destino, 0777, true); // Crea el directorio recursivamente con permisos de escritura

@@ -29,6 +29,8 @@
     
     <br />
     <a href="tareas.php">Tareas</a>
+    <br />
+    <a href="materiales.php">Materiales</a>
 </body>
 
 </html>
