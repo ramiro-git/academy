@@ -137,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <tr>
                         <td><?= $curso['title']; ?></td>
                         <td><?= $curso['description']; ?></td>
-                        <td><?= $curso['begin']; ?></td>
+                        <td><?= date('d/m/Y', strtotime($curso['begin'])); ?></td>
                         <td><?= $curso['duration']; ?></td>
                         <td><a href="updateCourse?id=<?= $curso["id"] ?>">Editar</a> <a href="deleteCourse?id=<?= $curso['id'] ?>">Eliminar</a></td>
                     </tr>

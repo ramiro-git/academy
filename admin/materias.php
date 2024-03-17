@@ -24,11 +24,15 @@ if (!empty($search)) $query_string .= '&search=' . urlencode($search);
 if (!empty($instructor)) $query_string .= '&instructor=' . urlencode($instructor);
 
 // Consulta base para seleccionar todos las inscripciones
-$query = "SELECT materias.*, cursos.title AS curso_nombre FROM materias LEFT JOIN cursos ON materias.curso_id = cursos.id WHERE 1";
+$query = "SELECT materias.*, cursos.title AS curso_nombre, instructores.nombre AS instructor_nombre 
+          FROM materias 
+          LEFT JOIN cursos ON materias.curso_id = cursos.id 
+          LEFT JOIN instructores ON materias.instructor = instructores.id 
+          WHERE 1";
 
 // Aplicar filtros si se han proporcionado
 if (!empty($search)) $query .= " AND (materias.nombre LIKE '%$search%' OR cursos.title LIKE '%$search%')";
-if (!empty($instructor)) $query .= " AND instructor = '$instructor'";
+if (!empty($instructor)) $query .= " AND materias.instructor = '$instructor'";
 
 // Ejecutar la consulta para obtener las inscripciones
 $get_inscriptions = $conn->prepare($query);
@@ -137,7 +141,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <tr>
                         <td><?= $materia['nombre']; ?></td>
                         <td><?= $materia['curso_nombre']; ?></td>
-                        <td><?= $materia['instructor']; ?></td>
+                        <td><?= $materia['instructor_nombre']; ?></td>
                         <td><a href="updateInstructor?id=<?= $materia["id"] ?>">Editar</a> <a href="deleteInstructor?id=<?= $materia['id'] ?>">Eliminar</a></td>
                     </tr>
                 <?php } ?>
