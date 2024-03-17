@@ -15,7 +15,6 @@ if (empty($_SESSION['admin_id'])) {
 
 // Inicializar variables de búsqueda con valores de la URL o cadenas vacías
 $search = isset($_GET['search']) ? $_GET['search'] : '';
-$instructor = isset($_GET['instructor']) ? $_GET['instructor'] : '';
 $begin = isset($_GET['begin']) ? $_GET['begin'] : '';
 $duration = isset($_GET['duration']) ? $_GET['duration'] : '';
 
@@ -25,7 +24,6 @@ $query_string = '';
 
 // Agregar parámetros de búsqueda a la URL base
 if (!empty($search)) $query_string .= '&search=' . urlencode($search);
-if (!empty($instructor)) $query_string .= '&instructor=' . urlencode($instructor);
 if (!empty($begin)) $query_string .= '&role=' . urlencode($begin);
 if (!empty($duration)) $query_string .= '&duration=' . urlencode($duration);
 
@@ -34,7 +32,6 @@ $query = "SELECT * FROM `cursos` WHERE 1";
 
 // Aplicar filtros si se han proporcionado
 if (!empty($search)) $query .= " AND (title LIKE '%$search%' OR description LIKE '%$search%')";
-if (!empty($instructor)) $query .= " AND instructor = '$instructor'";
 if (!empty($begin)) $query .= " AND begin = '$begin'";
 if (!empty($duration)) $query .= " AND duration = '$duration'";
 
@@ -60,27 +57,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recoger los datos del formulario
     $titulo = (isset($_POST["title"])) ? $_POST["title"] : NULL;
     $descripcion = (isset($_POST["description"])) ? $_POST["description"] : NULL;
-    $instructor = (isset($_POST["instructor"])) ? $_POST["instructor"] : NULL;
     $empieza = (isset($_POST["begin"])) ? $_POST["begin"] : NULL;
     $duracion = (isset($_POST["duration"])) ? $_POST["duration"] : NULL;
 
     // Validar los campos del formulario
     if (empty($titulo)) $errors['title'] = "El título es obligatorio.";
     if (empty($descripcion)) $errors['description'] = "La descripción es obligatoria.";
-    if (empty($instructor)) $errors['instructor'] = "El instructor es obligatorio.";
     if (empty($empieza)) $errors['begin'] = "El comienzo es obligatorio.";
     if (empty($duracion)) $errors['duration'] = "La duración es obligatoria.";
 
     if (strlen($titulo) > 255) $errors['title'] = "El título es demasiado largo.";
     if (strlen($descripcion) > 255) $errors['description'] = "La descripción es demasiado larga.";
-    if (strlen($instructor) > 255) $errors['instructor'] = "El instructor es demasiado largo.";
-
-    // Verificar si el instructor seleccionado es válido consultando la base de datos
-    $sql_instructor = $conn->prepare("SELECT id FROM `instructores` WHERE id = ?");
-    $sql_instructor->execute([$instructor]);
-
-    // Si el instructor seleccionado no existe, agregar un error
-    if ($sql_instructor->rowCount() == 0) $errors['instructor'] = "El instructor seleccionado no es válido.";
 
     // Verificar si la fecha seleccionada es válida y no es menor que la fecha actual
     $today = date("Y-m-d");
@@ -91,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Si no hay errores, insertar el nuevo curso en la base de datos
     if (empty($errors)) {
-        $sql = "INSERT INTO cursos (title, description, instructor, begin, duration) VALUES (:title, :description, :instructor, :begin, :duration)";
+        $sql = "INSERT INTO cursos (title, description, begin, duration) VALUES (:title, :description, :begin, :duration)";
 
         $result = $conn->prepare($sql);
 
@@ -99,7 +86,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = $result->execute(array(
             ':title' => $titulo,
             ':description' => $descripcion,
-            ':instructor' => $instructor,
             ':begin' => $empieza,
             ':duration' => $duracion,
         ));
@@ -127,19 +113,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="search" class="formulario__label">Título o Descripción:</label>
             <input class="formulario__input" type="text" name="search" placeholder="Ingrese el título o la descripción" value="<?= htmlspecialchars($search) ?>">
 
-            <label for="instructor" class="formulario__label">Instructor:</label>
-            <select class="formulario__select" name="instructor">
-                <option value="">Todos</option>
-                <?php
-                $sql_instructores = $conn->query("SELECT id, nombre FROM instructores");
-                while ($row = $sql_instructores->fetch(PDO::FETCH_ASSOC)) {
-                    echo "<option value='" . $row["id"] . "'";
-                    if ($instructor == $row["id"]) echo " selected";
-                    echo ">" . $row["nombre"] . "</option>";
-                }
-                ?>
-            </select>
-
             <label for="begin" class="formulario__label">Comienzo:</label>
             <input class="formulario__input" type="date" name="begin" id="begin" value="<?= htmlspecialchars($begin) ?>">
 
@@ -154,7 +127,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <tr>
                     <th>Título</th>
                     <th>Descripción</th>
-                    <th>Instructor</th>
                     <th>Comienzo</th>
                     <th>Duración</th>
                     <th>Acciones</th>
@@ -165,7 +137,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <tr>
                         <td><?= $curso['title']; ?></td>
                         <td><?= $curso['description']; ?></td>
-                        <td><?= $curso['instructor']; ?></td>
                         <td><?= $curso['begin']; ?></td>
                         <td><?= $curso['duration']; ?></td>
                         <td><a href="updateCourse?id=<?= $curso["id"] ?>">Editar</a> <a href="deleteCourse?id=<?= $curso['id'] ?>">Eliminar</a></td>
@@ -202,19 +173,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <label for="description" class="formulario__label">Descripción:</label>
             <input class="formulario__input" type="text" name="description" id="description" value="<?php echo isset($_POST['description']) ? htmlspecialchars($_POST['description']) : ''; ?>" />
-
-            <?php $sql = $conn->prepare("SELECT id, nombre FROM instructores");
-            $sql->execute();
-            if ($sql->rowCount() > 0) {
-                echo "<label for='instructor' class='formulario__label'>Instructor:</label> <select class='formulario__select' name='instructor'>";
-                while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-                    echo "<option value='" . $row["id"] . "'>" . $row["nombre"] . "</option>";
-                }
-                echo "</select>";
-            } else {
-                echo "No hay instructores disponibles.";
-            }
-            ?>
 
             <label for="begin" class="formulario__label">Comienza:</label>
             <input class="formulario__input" type="datetime-local" name="begin" id="begin" value="<?php echo isset($_POST['begin']) ? htmlspecialchars($_POST['begin']) : ''; ?>" />

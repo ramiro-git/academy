@@ -23,7 +23,7 @@
     if ($select_teacher->rowCount() > 0) {
         $fetch_teacher = $select_teacher->fetch(PDO::FETCH_ASSOC);
 
-        echo "<br /><a href='asistencia.php?id=" . $fetch_teacher['id'] . "'>Asistencia</a>";
+        echo "<br /><a href='asistencia.php'>Asistencia</a>";
     }
     ?>
 </body>

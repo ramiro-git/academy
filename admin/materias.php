@@ -13,6 +13,7 @@ if (empty($_SESSION['admin_id'])) {
 
 // Inicializar variables de búsqueda con valores de la URL o cadenas vacías
 $search = isset($_GET['search']) ? $_GET['search'] : '';
+$instructor = isset($_GET['instructor']) ? $_GET['instructor'] : '';
 
 // Construir la URL base para la paginación
 $base_url = 'materias.php';
@@ -20,12 +21,14 @@ $query_string = '';
 
 // Agregar parámetros de búsqueda a la URL base
 if (!empty($search)) $query_string .= '&search=' . urlencode($search);
+if (!empty($instructor)) $query_string .= '&instructor=' . urlencode($instructor);
 
 // Consulta base para seleccionar todos las inscripciones
 $query = "SELECT materias.*, cursos.title AS curso_nombre FROM materias LEFT JOIN cursos ON materias.curso_id = cursos.id WHERE 1";
 
 // Aplicar filtros si se han proporcionado
 if (!empty($search)) $query .= " AND (materias.nombre LIKE '%$search%' OR cursos.title LIKE '%$search%')";
+if (!empty($instructor)) $query .= " AND instructor = '$instructor'";
 
 // Ejecutar la consulta para obtener las inscripciones
 $get_inscriptions = $conn->prepare($query);
@@ -49,17 +52,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recoger los datos del formulario
     $nombre = (isset($_POST["nombre"])) ? $_POST["nombre"] : NULL;
     $curso = (isset($_POST["curso"])) ? $_POST["curso"] : NULL;
+    $instructor = (isset($_POST["instructor"])) ? $_POST["instructor"] : NULL;
 
     // Validar los campos del formulario
     if (empty($nombre)) $errors['nombre'] = "El nombre es obligatorio.";
     if (empty($curso)) $errors['curso'] = "El curso es obligatorio.";
+    if (empty($instructor)) $errors['instructor'] = "El instructor es obligatorio.";
 
     if (strlen($nombre) > 255) $errors['nombre'] = "El nombre es demasiado largo.";
     if (strlen($curso) > 255) $errors['curso'] = "El curso es demasiado largo.";
+    if (strlen($instructor) > 255) $errors['instructor'] = "El instructor es demasiado largo.";
+
+    // Verificar si el instructor seleccionado es válido consultando la base de datos
+    $sql_instructor = $conn->prepare("SELECT id FROM `instructores` WHERE id = ?");
+    $sql_instructor->execute([$instructor]);
+
+    // Si el instructor seleccionado no existe, agregar un error
+    if ($sql_instructor->rowCount() == 0) $errors['instructor'] = "El instructor seleccionado no es válido.";
 
     // Si no hay errores, insertar el nuevo curso en la base de datos
     if (empty($errors)) {
-        $sql = "INSERT INTO materias (nombre, curso_id) VALUES (:nombre, :curso_id)";
+        $sql = "INSERT INTO materias (nombre, curso_id, instructor) VALUES (:nombre, :curso_id, :instructor)";
 
         $result = $conn->prepare($sql);
 
@@ -67,6 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = $result->execute(array(
             ':nombre' => $nombre,
             ':curso_id' => $curso, // Cambiar ':curso' a ':curso_id'
+            ':instructor' => $instructor,
         ));
 
         // Redirigir de vuelta a la página de cursos después de agregar el curso
@@ -93,6 +107,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="search" class="formulario__label">Nombre o Curso:</label>
             <input class="formulario__input" type="text" name="search" placeholder="Ingrese el nombre o curso" value="<?= htmlspecialchars($search) ?>">
 
+            <label for="instructor" class="formulario__label">Instructor:</label>
+            <select class="formulario__select" name="instructor">
+                <option value="">Todos</option>
+                <?php
+                $sql_instructores = $conn->query("SELECT id, nombre FROM instructores");
+                while ($row = $sql_instructores->fetch(PDO::FETCH_ASSOC)) {
+                    echo "<option value='" . $row["id"] . "'";
+                    if ($instructor == $row["id"]) echo " selected";
+                    echo ">" . $row["nombre"] . "</option>";
+                }
+                ?>
+            </select>
+
             <button class="formulario__submit" type="submit">Buscar</button>
         </form>
 
@@ -101,6 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <tr>
                     <th>Nombre</th>
                     <th>Curso</th>
+                    <th>Instructor</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -109,6 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <tr>
                         <td><?= $materia['nombre']; ?></td>
                         <td><?= $materia['curso_nombre']; ?></td>
+                        <td><?= $materia['instructor']; ?></td>
                         <td><a href="updateInstructor?id=<?= $materia["id"] ?>">Editar</a> <a href="deleteInstructor?id=<?= $materia['id'] ?>">Eliminar</a></td>
                     </tr>
                 <?php } ?>
@@ -157,6 +186,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 ?>
             </select>
+
+            <?php $sql = $conn->prepare("SELECT id, nombre FROM instructores");
+            $sql->execute();
+            if ($sql->rowCount() > 0) {
+                echo "<label for='instructor' class='formulario__label'>Instructor:</label> <select class='formulario__select' name='instructor'>";
+                while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+                    echo "<option value='" . $row["id"] . "'>" . $row["nombre"] . "</option>";
+                }
+                echo "</select>";
+            } else {
+                echo "No hay instructores disponibles.";
+            }
+            ?>
 
             <input class="formulario__submit" type="submit" value="Añadir">
         </form>
