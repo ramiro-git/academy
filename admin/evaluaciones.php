@@ -226,7 +226,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <select class="formulario__input" name="tipo" id="tipo">
                 <option value="" disabled>Seleccione un tipo de evaluación</option>
                 <option value="examen">Examen</option>
-                <option value="cuestionario">Cuestionario</option>
                 <option value="proyecto">Proyecto</option>
                 <option value="otro">Otro</option>
             </select>
