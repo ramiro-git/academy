@@ -26,6 +26,9 @@
         echo "<br /><a href='asistencia.php'>Asistencia</a>";
     }
     ?>
+    
+    <br />
+    <a href="tareas.php">Tareas</a>
 </body>
 
 </html>
