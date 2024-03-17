@@ -72,27 +72,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h1>Asistencia - Materia: <?php echo $subject['nombre']; ?></h1>
         <h2>Curso: <?php echo $subject['nombre_curso']; ?></h2>
         <h2>Alumnos Inscritos:</h2>
-        <!-- Formulario para marcar asistencia para esta materia -->
-        <form method="post">
-            <h2>Marcar Asistencia:</h2>
-            <ul>
-                <!-- Recorrer estudiantes inscritos para esta materia -->
-                <?php
-                $select_enrolled_students = $conn->prepare("SELECT usuarios.* FROM `inscripciones_materias` INNER JOIN `usuarios` ON inscripciones_materias.user_id = usuarios.id WHERE inscripciones_materias.materia_id = ?");
-                $select_enrolled_students->execute([$subject['id']]);
-                $enrolled_students = $select_enrolled_students->fetchAll(PDO::FETCH_ASSOC);
 
-                foreach ($enrolled_students as $student) : ?>
-                    <li>
-                        <label>
-                            <input type="checkbox" name="attendance[<?php echo $subject['id']; ?>][<?php echo $student['id']; ?>]">
-                            <?php echo $student['name']; ?>
-                        </label>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-            <button type="submit">Guardar Asistencia</button>
-        </form>
+        <!-- Verificar si hay estudiantes inscritos para esta materia -->
+        <?php
+        $select_enrolled_students = $conn->prepare("SELECT usuarios.* FROM `inscripciones_materias` INNER JOIN `usuarios` ON inscripciones_materias.user_id = usuarios.id WHERE inscripciones_materias.materia_id = ?");
+        $select_enrolled_students->execute([$subject['id']]);
+        $enrolled_students = $select_enrolled_students->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($enrolled_students)) {
+            echo "<p>Aún no hay ningún estudiante inscrito en esta materia.</p>";
+        } else {
+        ?>
+            <!-- Formulario para marcar asistencia para esta materia -->
+            <form method="post">
+                <h2>Marcar Asistencia:</h2>
+                <ul>
+                    <!-- Recorrer estudiantes inscritos para esta materia -->
+                    <?php
+                    foreach ($enrolled_students as $student) : ?>
+                        <li>
+                            <label>
+                                <input type="checkbox" name="attendance[<?php echo $subject['id']; ?>][<?php echo $student['id']; ?>]">
+                                <?php echo $student['name']; ?>
+                            </label>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <button type="submit">Guardar Asistencia</button>
+            </form>
+        <?php } ?>
     <?php endforeach; ?>
 </body>
 
