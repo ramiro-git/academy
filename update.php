@@ -90,11 +90,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-    <h1>Bienvenido, <?php echo $page_title; ?></h1>
+    <h1>¡Bienvenido <?php echo $page_title; ?>!</h1>
 
     <div class="bloques">
-        <h4>Tipo de Usuario: <?= $fetch_profile['role'] == 1 ? "Administrador" : "Usuario" ?></h4>
-
         <form action="update.php" method="POST" class="formulario">
             <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
@@ -124,8 +122,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <button type="button" onclick="togglePasswordVisibility('password_repeat', 'password-repeat-visibility-toggle')">Mostrar contraseña</button>
 
-            <label for="twoFactor" class="formulario__label">Doble Factor</label>
-            <input class="formulario__radio" type="checkbox" name="twoFactor" id="twoFactor" <?php if ($fetch_profile['twoFactor'] == 1) echo 'checked'; ?>>
+            <div class="formulario__checkbox">
+                <label class="formulario__label" for="twoFactor">Doble Factor</label>
+                <input class="formulario__radio" type="checkbox" name="twoFactor" id="twoFactor" <?php if ($fetch_profile['twoFactor'] == 1) echo 'checked'; ?>>
+            </div>
 
             <button class="formulario__submit" type="submit">Actualizar Perfil</button>
         </form>

@@ -2,7 +2,7 @@
 @use "base/mixins" as m;
 
 .bloques {
-  @include m.contenedor;
+  @include m.contenedor-formulario;
 
   @include m.tablet {
     margin-top: 3rem;
@@ -122,8 +122,44 @@
     }
   }
 
-  &__radio {
+  &__checkbox {
     display: flex;
+    align-items: center;
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 2rem;
+  }
+
+  &__checkbox input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  &__checkbox input[type="checkbox"]:checked {
+    border-color: dodgerblue;
+    background-color: dodgerblue;
+  }
+
+  &__checkbox label {
+    font-size: 1.6rem;
+    color: #333;
+    cursor: pointer;
+  }
+
+  &__radio {
+    margin-left: 1rem;
+    display: flex;
+    margin-top: 1rem;
     gap: 2rem;
   }
 
@@ -146,7 +182,7 @@
   }
 
   &__submit {
-    @include m.boton(v.$secundario, v.$blanco);
+    @include m.boton(dodgerblue, v.$blanco);
     width: auto;
     align-self: flex-start;
     margin: 0 auto;
@@ -158,19 +194,19 @@
     }
 
     &--azul {
-      @include m.boton(v.$secundario, v.$blanco);
+      @include m.boton(dodgerblue, v.$blanco);
       width: 100%;
       align-self: flex-start;
     }
 
     &--verde {
-      @include m.boton(v.$secundario, v.$blanco);
+      @include m.boton(dodgerblue, v.$blanco);
       width: 100%;
       align-self: flex-start;
     }
 
     &--rojo {
-      @include m.boton(v.$rojo, v.$blanco);
+      @include m.boton(dodgerblue, v.$blanco);
       width: 100%;
       align-self: flex-start;
     }
@@ -193,7 +229,7 @@
     font-weight: v.$regular;
 
     &--confirmar {
-      @include m.boton(v.$azul, v.$blanco);
+      @include m.boton(dodgerblue, v.$blanco);
     }
   }
 }
