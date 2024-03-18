@@ -87,6 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Usuario - <?php echo $page_title ?></title>
     <link rel="stylesheet" href="build/css/app.css" />
     <script src="build/js/app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 
 <body>
@@ -114,13 +115,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <label for="password" class="formulario__label">Contraseña:</label>
             <input class="formulario__input" type="password" name="password" id="password" />
-
-            <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar contraseña</button>
+            <div class="password-input-container">
+                <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
 
             <label for="password_repeat" class="formulario__label">Repetir Contraseña:</label>
             <input class="formulario__input" type="password" name="password_repeat" id="password_repeat" />
-
-            <button type="button" onclick="togglePasswordVisibility('password_repeat', 'password-repeat-visibility-toggle')">Mostrar contraseña</button>
+            <div class="password-input-container">
+                <span class="password-toggle" onclick="togglePasswordVisibility('password_repeat')">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
 
             <div class="formulario__checkbox">
                 <label class="formulario__label" for="twoFactor">Doble Factor</label>

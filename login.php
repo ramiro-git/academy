@@ -65,6 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login</title>
     <link rel="stylesheet" href="build/css/app.css" />
     <script src="build/js/app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 
 <body>
@@ -76,15 +77,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input class="formulario__input" type="email" name="email" id="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" />
 
             <label for="password" class="formulario__label">Contraseña:</label>
-            <input class="formulario__input" type="password" name="password" id="password" required />
-
-            <button type="button" onclick="togglePasswordVisibility('password', 'password-visibility-toggle')">Mostrar</button>
+            <input class="formulario__input" type="password" name="password" id="password" />
+            <div class="password-input-container">
+                <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
 
             <button type="submit" class="formulario__submit">Iniciar Sesión</button>
         </form>
 
         <div class="acciones">
-            <a class="acciones__enlace" href="login.php">¿Ya tienes cuenta? Iniciar Sesión</a>
+            <a class="acciones__enlace" href="login.php">¿No tienes cuenta? Registrate</a>
             <a class="acciones__enlace" href="olvide.php">¿Olvidaste la contraseña? Recuperar Contraseña</a>
         </div>
     </div>

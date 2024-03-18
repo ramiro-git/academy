@@ -233,3 +233,29 @@
     }
   }
 }
+
+.password-input-container {
+  position: relative;
+}
+
+.password-input-container input {
+  padding-right: 30px; /* Ajusta el espacio para el ícono */
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.password-toggle i {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 4rem;
+}
+
+.password-toggle:hover i {
+  color: #333;
+}
