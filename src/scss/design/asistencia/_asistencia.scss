@@ -1,73 +1,61 @@
 @use "base/variables" as v;
 @use "base/mixins" as m;
 
-.title {
-  font-size: 24px;
-  color: #333;
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.subtitle {
-  font-size: 18px;
-  color: #666;
+.subject {
+  border: 1px solid #ccc;
+  padding: 20px;
 }
 
-.empty-message {
-  font-style: italic;
-  color: #000;
-  text-align: center;
+.student-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.attendance-form {
-  margin-top: 20px;
-}
-
-.student-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.checkbox-label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.attendance-checkbox {
-  margin-right: 10px;
-}
-
-.student-name {
-  font-size: 16px;
-}
-
-.attendance-submit {
-  margin-top: 10px;
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
+.student-item label {
+  display: flex;
+  align-items: center;
   cursor: pointer;
 }
 
-.attendance-submit:hover {
-  background-color: #0056b3;
+.student-item input[type="checkbox"] {
+  display: none;
 }
 
-.subject-attendance {
+.student-item input[type="checkbox"] + span {
+  position: relative;
   display: inline-block;
-  border: 1px solid #000;
-  margin: 10px;
-  padding: 10px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  background-color: #fff;
+  margin-right: 10px; /* Ajustado para crear espacio entre el checkbox y el nombre del estudiante */
 }
 
-.subject-title {
-  margin-bottom: 5px;
+.student-item input[type="checkbox"]:checked + span::after {
+  content: "\2714";
+  font-size: 16px;
+  color: #555;
+  position: absolute;
+  top: 2px;
+  left: 4px;
 }
 
-.student-name {
-  display: block;
+.student-item label span {
+  margin-right: 10px; /* Nuevo: Ajuste el margen entre el nombre del estudiante y el checkbox */
 }
 
-.attendance-checkbox {
-  margin: 5px auto;
+@media only screen and (max-width: 600px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
 }

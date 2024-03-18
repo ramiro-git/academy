@@ -71,41 +71,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <?php require("components/header.php"); ?>
 
-    <?php foreach ($subjects as $subject) : ?>
-        <div class="subject-attendance">
-            <h1 class="subject-title">Asistencia - Materia: <?php echo $subject['nombre']; ?></h1>
-            <h2 class="subtitle">Curso: <?php echo $subject['nombre_curso']; ?></h2>
+    <div class="container">
+        <?php foreach ($subjects as $subject) : ?>
+            <div class="subject">
+                <h4>Asistencia - Materia: <?php echo $subject['nombre']; ?></h4>
+                <h4>Curso: <?php echo $subject['nombre_curso']; ?></h4>
 
-            <!-- Verificar si hay estudiantes inscritos para esta materia -->
-            <?php
-            $select_enrolled_students = $conn->prepare("SELECT usuarios.* FROM `inscripciones_materias` INNER JOIN `usuarios` ON inscripciones_materias.user_id = usuarios.id WHERE inscripciones_materias.materia_id = ?");
-            $select_enrolled_students->execute([$subject['id']]);
-            $enrolled_students = $select_enrolled_students->fetchAll(PDO::FETCH_ASSOC);
+                <?php
+                $select_enrolled_students = $conn->prepare("SELECT usuarios.* FROM `inscripciones_materias` INNER JOIN `usuarios` ON inscripciones_materias.user_id = usuarios.id WHERE inscripciones_materias.materia_id = ?");
+                $select_enrolled_students->execute([$subject['id']]);
+                $enrolled_students = $select_enrolled_students->fetchAll(PDO::FETCH_ASSOC);
 
-            if (empty($enrolled_students)) {
-                echo "<p class='empty-message'>Aún no hay ningún estudiante inscrito en esta materia.</p>";
-            } else {
-            ?>
-                <!-- Formulario para marcar asistencia para esta materia -->
-                <form method="post" class="attendance-form">
-                    <h2 class="subtitle">Marcar Asistencia:</h2>
-                    <ul class="student-list">
-                        <!-- Recorrer estudiantes inscritos para esta materia -->
-                        <?php
-                        foreach ($enrolled_students as $student) : ?>
-                            <li>
-                                <label class="checkbox-label">
-                                    <span class="student-name"><?php echo $student['name']; ?></span>
-                                    <input type="checkbox" name="attendance[<?php echo $subject['id']; ?>][<?php echo $student['id']; ?>]" class="attendance-checkbox">
-                                </label>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                    <button type="submit" class="attendance-submit">Guardar Asistencia</button>
-                </form>
-            <?php } ?>
-        </div>
-    <?php endforeach; ?>
+                if (empty($enrolled_students)) {
+                    echo "<p class='text-center'>Aún no hay ningún estudiante inscrito en esta materia.</p>";
+                } else {
+                ?>
+                    <form method="post" class="formulario">
+                        <ul>
+                            <?php foreach ($enrolled_students as $student) : ?>
+                                <li class="student-item">
+                                    <label>
+                                        <?php echo $student['name']; ?>&nbsp;
+                                        <input type="checkbox" name="attendance[<?php echo $subject['id']; ?>][<?php echo $student['id']; ?>]">
+                                        <span></span>
+                                    </label>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <button class="formulario__submit" type="submit">Guardar Asistencia</button>
+                    </form>
+                <?php } ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
 </body>
 
 </html>
