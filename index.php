@@ -1,5 +1,3 @@
-<?php include("config/sesion.php"); ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,30 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
+    <link rel="stylesheet" href="build/css/app.css" />
 </head>
 
 <body>
-    <h1>Inicio</h1>
-
-    <?php if ($user_id != '') echo "<a href='update.php?id=$user_id'>Actualizar</a><br /><a href='logout.php'>Cerrar Sesión</a>" ?>
-
-    <?php if ($user_id == '') echo "<a href='login.php'>Login</a><br /><a href='registro.php'>Registro</a>"; ?>
-
-    <?php
-    $select_teacher = $conn->prepare("SELECT * FROM `materias` WHERE instructor = ?");
-    $select_teacher->execute([$user_id]);
-
-    if ($select_teacher->rowCount() > 0) {
-        $fetch_teacher = $select_teacher->fetch(PDO::FETCH_ASSOC);
-
-        echo "<br /><a href='asistencia.php'>Asistencia</a>";
-    }
-    ?>
-    
-    <br />
-    <a href="tareas.php">Tareas</a>
-    <br />
-    <a href="materiales.php">Materiales</a>
+    <?php require("components/header.php"); ?>
 </body>
 
 </html>
