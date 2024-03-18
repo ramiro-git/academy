@@ -1,0 +1,54 @@
+@use "base/variables" as v;
+@use "base/mixins" as m;
+
+.title {
+  font-size: 24px;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #666;
+}
+
+.empty-message {
+  font-style: italic;
+  color: #000;
+  text-align: center;
+}
+
+.attendance-form {
+  margin-top: 20px;
+}
+
+.student-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.checkbox-label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.attendance-checkbox {
+  margin-right: 10px;
+}
+
+.student-name {
+  font-size: 16px;
+}
+
+.attendance-submit {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.attendance-submit:hover {
+  background-color: #0056b3;
+}
