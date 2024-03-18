@@ -80,6 +80,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
+    <?php require("components/header.php"); ?>
+
     <h2>Registrar Usuario</h2>
 
     <div class="bloques">

@@ -57,6 +57,8 @@ $completed_evaluations = $select_completed_evaluations->fetchAll(PDO::FETCH_COLU
 </head>
 
 <body>
+    <?php require("components/header.php"); ?>
+
     <ul>
         <?php foreach ($evaluations as $evaluation) : ?>
             <li>

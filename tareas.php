@@ -68,6 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
+    <?php require("components/header.php"); ?>
+
     <?php $select_teacher = $conn->prepare("SELECT * FROM `materias` WHERE instructor = ?");
     $select_teacher->execute([$user_id]);
 

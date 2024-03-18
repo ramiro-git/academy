@@ -69,6 +69,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
+    <?php require("components/header.php"); ?>
+
     <div class="bloques">
         <form action="login.php" method="POST" class="formulario">
             <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>

@@ -59,6 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['evaluation_id'])) {
 </head>
 
 <body>
+    <?php require("components/header.php"); ?>
+
     <h1><?= $evaluation_name ?></h1>
     <p><strong>Descripción:</strong> <?= $description ?></p>
     <p><strong>Ponderación:</strong> <?= $weight ?>%</p>

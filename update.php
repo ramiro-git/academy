@@ -91,6 +91,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
+    <?php require("components/header.php"); ?>
+
     <h1>¡Bienvenido <?php echo $page_title; ?>!</h1>
 
     <div class="bloques">

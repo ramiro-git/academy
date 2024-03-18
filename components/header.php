@@ -1,5 +1,3 @@
-<?php include("config/sesion.php"); ?>
-
 <header>
     <div class="logo"><a href="/">Academia</a></div>
     <input type="checkbox" id="nav_check" hidden>
@@ -36,3 +34,4 @@
         <div></div>
     </label>
 </header>
+<hr class="hr">

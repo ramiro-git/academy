@@ -69,8 +69,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-        <?php foreach ($subjects as $subject) : ?>
-            <h1 class="title">Asistencia - Materia: <?php echo $subject['nombre']; ?></h1>
+    <?php require("components/header.php"); ?>
+
+    <?php foreach ($subjects as $subject) : ?>
+        <div class="subject-attendance">
+            <h1 class="subject-title">Asistencia - Materia: <?php echo $subject['nombre']; ?></h1>
             <h2 class="subtitle">Curso: <?php echo $subject['nombre_curso']; ?></h2>
 
             <!-- Verificar si hay estudiantes inscritos para esta materia -->
@@ -101,7 +104,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="submit" class="attendance-submit">Guardar Asistencia</button>
                 </form>
             <?php } ?>
-        <?php endforeach; ?>
+        </div>
+    <?php endforeach; ?>
 </body>
 
 </html>

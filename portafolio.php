@@ -28,6 +28,8 @@ $absent_attendances = $select_absent_attendance->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body>
+    <?php require("components/header.php"); ?>
+
     <h1>Portafolio de Asistencias</h1>
 
     <h2>Tus Asistencias Presentes:</h2>

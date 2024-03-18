@@ -47,6 +47,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['evaluation_id'])) {
 </head>
 
 <body>
+    <?php require("components/header.php"); ?>
+
     <h1>Evaluación Completada: <?= $evaluation_name ?></h1>
     <h2>Respuestas:</h2>
     <ul>

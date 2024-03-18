@@ -52,3 +52,22 @@
 .attendance-submit:hover {
   background-color: #0056b3;
 }
+
+.subject-attendance {
+  display: inline-block;
+  border: 1px solid #000;
+  margin: 10px;
+  padding: 10px;
+}
+
+.subject-title {
+  margin-bottom: 5px;
+}
+
+.student-name {
+  display: block;
+}
+
+.attendance-checkbox {
+  margin: 5px auto;
+}
