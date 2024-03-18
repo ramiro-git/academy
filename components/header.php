@@ -1,5 +1,5 @@
 <header>
-    <div class="logo"><a href="/">Academia</a></div>
+    <div class="logo"><a href="index.php">Academia</a></div>
     <input type="checkbox" id="nav_check" hidden>
     <nav>
         <ul>

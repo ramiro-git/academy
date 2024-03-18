@@ -1,3 +1,5 @@
+<?php include("config/sesion.php"); ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
