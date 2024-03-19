@@ -25,5 +25,5 @@ function formatSizeUnits($bytes)
     // Convertir bytes a MB
     $mb = $bytes / (1024 * 1024);
     // Formatear el resultado con 5 decimales y agregar 'MB'
-    return number_format($mb, 5) . ' MB';
+    return number_format($mb, 2) . ' MB';
 }

@@ -114,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </select>
 
                 <label for="archivo" class="formulario__label">Archivo:</label>
-                <input class="formulario__input" type="file" name="archivo" id="archivo">
+                <input class="formulario__input" type="file" name="archivo" id="archivo" accept=".pdf,.doc,.docx" placeholder="Seleccionar archivo...">
 
                 <label for="materia" class="formulario__label">Materia:</label>
                 <select class="formulario__input" name="materia" id="materia">
@@ -134,37 +134,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input class="formulario__submit" type="submit" value="Añadir">
             </form>
         </div>
-    <?php } else { ?>
-        <h2>Materiales</h2>
-        <?php
+    <?php } else {
         // Consultar la base de datos para obtener las materias a las que está inscrito el usuario
         $query_materias_usuario = "SELECT * FROM inscripciones_materias WHERE user_id = ?";
         $get_materias_usuario = $conn->prepare($query_materias_usuario);
         $get_materias_usuario->execute([$user_id]);
         $materias_usuario = $get_materias_usuario->fetchAll();
 
-        // Iterar sobre las materias del usuario y obtener los materiales asociados a cada una
-        foreach ($materias_usuario as $materia_usuario) {
-            $materia_id = $materia_usuario['materia_id'];
-            $query_materia = "SELECT * FROM materias WHERE id = ?";
-            $get_materia = $conn->prepare($query_materia);
-            $get_materia->execute([$materia_id]);
-            $materia = $get_materia->fetch();
+        // Verificar si el usuario tiene materias inscritas
+        if (count($materias_usuario) > 0) {
+            echo "<h2>Materiales</h2>";
 
-            echo "<p>" . $materia['nombre'] . "</p>";
-            echo "<ul>";
+            // Iterar sobre las materias del usuario y obtener los materiales asociados a cada una
+            foreach ($materias_usuario as $materia_usuario) {
+                $materia_id = $materia_usuario['materia_id'];
+                $query_materiales = "SELECT * FROM materiales WHERE materia_id = ?";
+                $get_materiales = $conn->prepare($query_materiales);
+                $get_materiales->execute([$materia_id]);
+                $materiales = $get_materiales->fetchAll();
 
-            $query_materiales = "SELECT * FROM materiales WHERE materia_id = ?";
-            $get_materiales = $conn->prepare($query_materiales);
-            $get_materiales->execute([$materia_id]);
-            $materiales = $get_materiales->fetchAll();
-
-            foreach ($materiales as $material) {
-                echo "<li>Nombre: " . $material['nombre_archivo'] . " - Tipo: " . $material['tipo_lectura'] . " - Tamaño: " . formatSizeUnits($material['tamano']) . " - <a href='http://localhost/academia/uploads/materiales/" . basename($material['archivo']) . "' download class='btn btn-primary'>Descargar</a></li>";
+                // Verificar si hay materiales disponibles para esta materia
+                if (count($materiales) > 0) {
+                    echo "<p>Materiales para la materia: " . $materia_id . ":</p>";
+                    echo "<ul>";
+                    foreach ($materiales as $material) {
+                        echo "<li>Nombre: " . $material['nombre_archivo'] . " - Tipo: " . $material['tipo_lectura'] . " - Tamaño: " . formatSizeUnits($material['tamano']) . " - <a href='http://localhost/academia/uploads/materiales/" . basename($material['archivo']) . "' download class='btn btn-primary'>Descargar</a></li>";
+                    }
+                    echo "</ul>";
+                }
             }
-            echo "</ul>";
+        } else {
+            echo "<div class='text-center'><h2>No hay materiales aún</h2><img style='max-width: 300px;' src='build/img/download.svg' alt='Descargas' /></div>";
         }
-        ?>
+    ?>
     <?php } ?>
 </body>
 
