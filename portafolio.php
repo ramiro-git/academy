@@ -47,6 +47,8 @@ $attendances = $select_attendance->fetchAll(PDO::FETCH_ASSOC);
             <?php endforeach; ?>
         </div>
     </div>
+
+    <?php require("components/footer.php"); ?>
 </body>
 
 </html>
