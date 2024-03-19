@@ -16,6 +16,9 @@
                 }
                 ?>
                 <li>
+                    <a href="portafolio.php">Portafolio</a>
+                </li>
+                <li>
                     <a href="materiales.php">Materiales</a>
                 </li>
                 <li>
