@@ -19,9 +19,6 @@
                     <a href="portafolio.php">Portafolio</a>
                 </li>
                 <li>
-                    <a href="materiales.php">Materiales</a>
-                </li>
-                <li>
                     <a href="tareas.php">Tareas</a>
                 </li>
                 <li><a href='logout.php'>Cerrar Sesión</a></li>

@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
     <link rel="stylesheet" href="build/css/app.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 
 <body>
@@ -42,10 +43,30 @@
                             <div class="materia-titulo"><?php echo $materia['nombre']; ?></div>
                         </div>
                         <div class="materia-iconos">
-                            <div class="materia-iconos-icono" style="margin-right: 2rem;"><i class="fas fa-book"></i> Contenido</div>
-                            <div class="materia-iconos-icono" style="margin-right: 2rem;"><i class="fas fa-comments"></i> Foro</div>
-                            <div class="materia-iconos-icono" style="margin-right: 2rem;"><i class="fas fa-envelope"></i> Mensajes</div>
-                            <div class="materia-iconos-icono" style="margin-right: 2rem;"><i class="fas fa-clipboard-check"></i> Evaluación</div>
+                            <div class="icono-texto">
+                                <a href="materiales.php">
+                                    <i class="fas fa-book"></i>
+                                    <span>Contenido</span>
+                                </a>
+                            </div>
+                            <div class="icono-texto">
+                                <a href="foros.php">
+                                    <i class="fas fa-comments"></i>
+                                    <span>Foro</span>
+                                </a>
+                            </div>
+                            <div class="icono-texto">
+                                <a href="mensajes.php">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Mensajes</span>
+                                </a>
+                            </div>
+                            <div class="icono-texto">
+                                <a href="evaluaciones.php">
+                                    <i class="fas fa-clipboard-check"></i>
+                                    <span>Evaluación</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
 
