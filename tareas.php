@@ -108,7 +108,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </form>
         </div>
     <?php } else { ?>
-        <h2>Tareas asignadas</h2>
         <ul>
             <?php
             // Consultar la base de datos para obtener las tareas asignadas al usuario actual
@@ -117,9 +116,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $get_tareas->execute([$user_id]);
             $tareas = $get_tareas->fetchAll();
 
-            // Iterar sobre los resultados y mostrar cada tarea
-            foreach ($tareas as $tarea) {
-                echo "<li>" . $tarea['nombre'] . " - " . $tarea['descripcion'] . " - " . $tarea['fecha_entrega'] . "</li>";
+            // Verificar si hay tareas asignadas
+            if (count($tareas) == 0) {
+                echo "<div class='text-center'><h2>No hay tareas asignadas</h2><img style='max-width: 300px;' src='build/img/tareas.svg' alt='Imagen Tareas' /></div>";
+            } else {
+                echo "<h2>Tareas asignadas</h2>";
+                
+                // Iterar sobre los resultados y mostrar cada tarea
+                foreach ($tareas as $tarea) {
+                    echo "<li>" . $tarea['nombre'] . " - " . $tarea['descripcion'] . " - " . $tarea['fecha_entrega'] . "</li>";
+                }
             }
             ?>
         </ul>

@@ -9,6 +9,11 @@
   padding: 20px;
 }
 
+.student-list-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
 .subject {
   border: 1px solid #ccc;
   padding: 20px;
@@ -38,7 +43,7 @@
   border: 1px solid #aaa;
   border-radius: 3px;
   background-color: #fff;
-  margin-right: 10px; /* Ajustado para crear espacio entre el checkbox y el nombre del estudiante */
+  margin-right: 10px;
 }
 
 .student-item input[type="checkbox"]:checked + span::after {
@@ -51,7 +56,7 @@
 }
 
 .student-item label span {
-  margin-right: 10px; /* Nuevo: Ajuste el margen entre el nombre del estudiante y el checkbox */
+  margin-right: 10px;
 }
 
 @media only screen and (max-width: 600px) {

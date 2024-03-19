@@ -74,8 +74,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container">
         <?php foreach ($subjects as $subject) : ?>
             <div class="subject">
-                <h4>Asistencia - Materia: <?php echo $subject['nombre']; ?></h4>
-                <h4>Curso: <?php echo $subject['nombre_curso']; ?></h4>
+                <h4 class="subject-title">Asistencia - Materia: <?php echo $subject['nombre']; ?></h4>
+                <h4 class="subject-title">Curso: <?php echo $subject['nombre_curso']; ?></h4>
 
                 <?php
                 $select_enrolled_students = $conn->prepare("SELECT usuarios.* FROM `inscripciones_materias` INNER JOIN `usuarios` ON inscripciones_materias.user_id = usuarios.id WHERE inscripciones_materias.materia_id = ?");
@@ -86,20 +86,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo "<p class='text-center'>Aún no hay ningún estudiante inscrito en esta materia.</p>";
                 } else {
                 ?>
-                    <form method="post" class="formulario">
-                        <ul>
-                            <?php foreach ($enrolled_students as $student) : ?>
-                                <li class="student-item">
-                                    <label>
-                                        <?php echo $student['name']; ?>&nbsp;
-                                        <input type="checkbox" name="attendance[<?php echo $subject['id']; ?>][<?php echo $student['id']; ?>]">
-                                        <span></span>
-                                    </label>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                        <button class="formulario__submit" type="submit">Guardar Asistencia</button>
-                    </form>
+                    <div class="student-list-container">
+                        <form method="post" class="formulario">
+                            <ul style="padding: 0px;">
+                                <?php foreach ($enrolled_students as $student) : ?>
+                                    <li class="student-item" style="justify-content: center;">
+                                        <label>
+                                            <?php echo $student['name']; ?>&nbsp;
+                                            <input type="checkbox" name="attendance[<?php echo $subject['id']; ?>][<?php echo $student['id']; ?>]">
+                                            <span></span>
+                                        </label>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <button class="formulario__submit" type="submit">Guardar Asistencia</button>
+                        </form>
+                    </div>
                 <?php } ?>
             </div>
         <?php endforeach; ?>
