@@ -163,11 +163,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo "</ul>";
                 }
             }
-        } else {
-            echo "<div class='text-center'><h2>No hay materiales aún</h2><img style='max-width: 300px;' src='build/img/download.svg' alt='Descargas' /></div>";
-        }
-    ?>
-    <?php } ?>
+        } else echo "<div class='text-center'><h2>No hay materiales aún</h2><img style='max-width: 300px;' src='build/img/download.svg' alt='Descargas' /></div>";
+    }
+
+    require("components/footer.php"); ?>
 </body>
 
 </html>

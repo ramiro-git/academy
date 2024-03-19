@@ -59,7 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['evaluation_id'])) {
             </li>
         <?php endforeach; ?>
     </ul>
-    <!-- Aquí puedes agregar más detalles de la evaluación o cualquier otro contenido que desees mostrar -->
+    
+    <?php require("components/footer.php"); ?>
 </body>
 
 </html>

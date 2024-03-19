@@ -121,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<div class='text-center'><h2>No hay tareas asignadas</h2><img style='max-width: 300px;' src='build/img/tareas.svg' alt='Imagen Tareas' /></div>";
             } else {
                 echo "<h2>Tareas asignadas</h2>";
-                
+
                 // Iterar sobre los resultados y mostrar cada tarea
                 foreach ($tareas as $tarea) {
                     echo "<li>" . $tarea['nombre'] . " - " . $tarea['descripcion'] . " - " . $tarea['fecha_entrega'] . "</li>";
@@ -129,7 +129,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             ?>
         </ul>
-    <?php } ?>
+    <?php }
+
+    require("components/footer.php"); ?>
 </body>
 
 </html>

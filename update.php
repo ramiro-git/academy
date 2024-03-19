@@ -139,6 +139,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button class="formulario__submit" type="submit">Actualizar Perfil</button>
         </form>
     </div>
+
+    <?php require("components/footer.php"); ?>
 </body>
 
 </html>

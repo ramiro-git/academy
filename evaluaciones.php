@@ -93,6 +93,8 @@ $completed_evaluations = $select_completed_evaluations->fetchAll(PDO::FETCH_COLU
             }
         });
     </script>
+
+    <?php require("components/footer.php"); ?>
 </body>
 
 </html>

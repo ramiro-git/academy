@@ -106,6 +106,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         <?php endforeach; ?>
     </div>
+
+    <?php require("components/footer.php"); ?>
 </body>
 
 </html>

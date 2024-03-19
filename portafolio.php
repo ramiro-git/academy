@@ -8,14 +8,9 @@ if ($user_id == '') {
 }
 
 // Consultar las asistencias del usuario actual donde estuvo presente
-$select_present_attendance = $conn->prepare("SELECT * FROM `asistencia` WHERE FIND_IN_SET(?, presentes)");
-$select_present_attendance->execute([$user_id]);
-$present_attendances = $select_present_attendance->fetchAll(PDO::FETCH_ASSOC);
-
-// Consultar las asistencias del usuario actual donde estuvo ausente
-$select_absent_attendance = $conn->prepare("SELECT * FROM `asistencia` WHERE FIND_IN_SET(?, ausentes)");
-$select_absent_attendance->execute([$user_id]);
-$absent_attendances = $select_absent_attendance->fetchAll(PDO::FETCH_ASSOC);
+$select_attendance = $conn->prepare("SELECT * FROM `asistencia` WHERE FIND_IN_SET(?, presentes) OR FIND_IN_SET(?, ausentes)");
+$select_attendance->execute([$user_id, $user_id]);
+$attendances = $select_attendance->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -31,32 +26,27 @@ $absent_attendances = $select_absent_attendance->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <?php require("components/header.php"); ?>
 
-    <h1>Portafolio de Asistencias</h1>
+    <h2>Asistencias</h2>
 
-    <h2>Tus Asistencias Presentes:</h2>
-    <ul>
-        <?php foreach ($present_attendances as $attendance) : ?>
-            <li>
-                <strong>Fecha:</strong> <?php echo $attendance['fecha']; ?><br>
-                <strong>Hora:</strong> <?php echo $attendance['hora']; ?><br>
-                <!-- Puedes mostrar más detalles según tus necesidades -->
-            </li>
-        <?php endforeach; ?>
-    </ul>
+    <div class="asistencia-englobador">
+        <div class="asistencia-margenes">
+            <?php foreach ($attendances as $attendance) : ?>
+                <div class="asistencia-alumno">
+                    <?php $formatted_date = date("d/m/Y", strtotime($attendance['fecha'])); ?>
 
-    <h2>Tus Asistencias Ausentes:</h2>
-    <ul>
-        <?php foreach ($absent_attendances as $attendance) : ?>
-            <li>
-                <strong>Fecha:</strong> <?php echo $attendance['fecha']; ?><br>
-                <strong>Hora:</strong> <?php echo $attendance['hora']; ?><br>
-                <!-- Puedes mostrar más detalles según tus necesidades -->
-            </li>
-        <?php endforeach; ?>
-    </ul>
+                    <div class="asistencia-fecha"><?= $formatted_date; ?></div>
 
-    <!-- Puedes agregar más contenido según tus necesidades -->
+                    <?php
+                    $status = (strpos($attendance['presentes'], $user_id) !== false) ? 'Presente' : 'Ausente';
 
+                    $status_class = ($status == 'Presente') ? 'presente' : 'ausente';
+                    ?>
+
+                    <div class="asistencia-cuadrado <?= $status_class; ?>"><?= $status; ?></div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 </body>
 
 </html>

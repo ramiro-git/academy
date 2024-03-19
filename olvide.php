@@ -64,6 +64,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a class="acciones__enlace" href="registro.php">¿No tienes cuenta? Registrate</a>
         </div>
     </div>
+
+    <?php require("components/footer.php"); ?>
 </body>
 
 </html>

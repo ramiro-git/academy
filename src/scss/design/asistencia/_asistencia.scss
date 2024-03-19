@@ -64,3 +64,37 @@
     grid-template-columns: 1fr;
   }
 }
+
+.asistencia-englobador {
+  margin: 2rem;
+}
+
+.asistencia-margenes {
+  margin: 0 auto;
+}
+
+.asistencia-alumno {
+  width: 90px;
+  display: inline-block;
+  margin: 0 6px 16px 0;
+}
+
+.asistencia-fecha {
+  margin-bottom: 1rem;
+}
+
+.asistencia-cuadrado {
+  color: #fff !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  border-radius: 5px !important;
+  text-align: center !important;
+}
+
+.presente {
+  background-color: #59a15b !important;
+}
+
+.ausente {
+  background-color: #ea4a3e !important;
+}

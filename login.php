@@ -94,6 +94,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a class="acciones__enlace" href="olvide.php">¿Olvidaste la contraseña? Recuperar Contraseña</a>
         </div>
     </div>
+
+    <?php require("components/footer.php"); ?>
 </body>
 
 </html>

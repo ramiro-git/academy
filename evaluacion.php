@@ -97,6 +97,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['evaluation_id'])) {
         <button type="submit" name="formRespuestas">Enviar respuestas</button>
     </form>
 
+    <?php require("components/footer.php"); ?>
+
     <script>
         // Función para actualizar el temporizador
         function updateTimer() {
