@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password_repeat = (isset($_POST["password_repeat"])) ? $_POST["password_repeat"] : NULL;
     $twoFactor = isset($_POST['twoFactor']) ? 1 : 0;
 
-    if (empty($nombre)) $errors['name'] = "El  nombre es obligatorio.";
+    if (empty($nombre)) $errors['name'] = "El nombre es obligatorio.";
     if (empty($apellido)) $errors['surname'] = "El apellido es obligatorio.";
     if (empty($genero)) $errors['gender'] = "El género es obligatorio";
 

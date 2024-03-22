@@ -26,6 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre = (isset($_POST["nombre"])) ? $_POST["nombre"] : NULL;
     $descripcion = (isset($_POST["descripcion"])) ? $_POST["descripcion"] : NULL;
     $fecha_entrega = (isset($_POST["fecha_entrega"])) ? $_POST["fecha_entrega"] : NULL;
+    $archivo_temporal = isset($_FILES['archivo_entregado']['tmp_name']) ? $_FILES['archivo_entregado']['tmp_name'] : NULL;
+    $archivo_nombre = isset($_FILES['archivo_entregado']['name']) ? $_FILES['archivo_entregado']['name'] : NULL;
     $materia_id = (isset($_POST["materia"])) ? $_POST["materia"] : NULL;
 
     // Validar los campos del formulario
@@ -37,22 +39,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (strlen($nombre) > 255) $errors['nombre'] = "El nombre es demasiado largo.";
     if (strlen($descripcion) > 255) $errors['descripcion'] = "La descripcion es demasiado larga.";
 
+    // Verificar si se ha subido un archivo
+    if (!isset($_FILES['archivo_entregado']) || $_FILES['archivo_entregado']['error'] === UPLOAD_ERR_NO_FILE) $errors['archivo_entregado'] = "Por favor, seleccione un archivo.";
+    else {
+        // Obtener la extensión del archivo
+        $extension = strtolower(pathinfo($archivo_nombre, PATHINFO_EXTENSION));
+
+        // Verificar si la extensión es válida
+        $extensiones_validas = array("pdf", "xls", "xlsx", "doc", "docx");
+
+        if (!in_array($extension, $extensiones_validas)) {
+            $errors[] = "La extensión del archivo no es válida. Por favor, seleccione un archivo PDF, Excel o Word.";
+        }
+    }
+
     // Si no hay errores, insertar el nuevo curso en la base de datos
     if (empty($errors)) {
-        $sql = "INSERT INTO tareas (nombre, descripcion, fecha_entrega, materia_id) VALUES (:nombre, :descripcion, :fecha_entrega, :materia_id)";
+        // Establecer la ruta de destino para la subida del archivo
+        $directorio_destino = $_SERVER['DOCUMENT_ROOT'] . "/academia/uploads/tareas/";
 
-        $result = $conn->prepare($sql);
+        // Comprobar si el directorio de destino existe, si no, intenta crearlo
+        if (!file_exists($directorio_destino)) mkdir($directorio_destino, 0777, true); // Crea el directorio recursivamente con permisos de escritura
 
-        // Ejecutar la consulta preparada con los datos del formulario
-        $result = $result->execute(array(
-            ':nombre' => $nombre,
-            ':descripcion' => $descripcion,
-            ':fecha_entrega' => $fecha_entrega,
-            ':materia_id' => $materia_id,
-        ));
+        // Generar un nombre único para el archivo
+        $archivo_destino = $directorio_destino . uniqid() . "_" . $archivo_nombre;
 
-        // Redirigir de vuelta a la página de cursos después de agregar el curso
-        header("Location: tareas.php");
+        if (move_uploaded_file($archivo_temporal, $archivo_destino)) {
+            $sql = "INSERT INTO tareas (nombre, descripcion, fecha_entrega, archivo, materia_id) VALUES (:nombre, :descripcion, :fecha_entrega, :archivo, :materia_id)";
+
+            $result = $conn->prepare($sql);
+
+            // Ejecutar la consulta preparada con los datos del formulario
+            $result = $result->execute(array(
+                ':nombre' => $nombre,
+                ':descripcion' => $descripcion,
+                ':fecha_entrega' => $fecha_entrega,
+                ':archivo' => $archivo_destino,
+                ':materia_id' => $materia_id,
+            ));
+
+            // Redirigir de vuelta a la página de cursos después de agregar el curso
+            header("Location: tareas.php");
+        }
     }
 }
 ?>
@@ -77,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h2>Añadir Tareas</h2>
 
         <div class="bloques">
-            <form action="tareas.php" method="POST" class="formulario">
+            <form action="tareas.php" method="POST" enctype="multipart/form-data" class="formulario" class="formulario">
                 <?php if (!empty($errors)) foreach ($errors as $error) echo "<br/>" . $error . "<br/>"; ?>
 
                 <label for="nombre" class="formulario__label">Nombre:</label>
@@ -88,6 +116,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <label for="fecha_entrega" class="formulario__label">Fecha de Entrega:</label>
                 <input class="formulario__input" type="date" name="fecha_entrega" id="fecha_entrega" required value="<?php echo isset($_POST['fecha_entrega']) ? htmlspecialchars($_POST['fecha_entrega']) : ''; ?>" />
+
+                <label for="archivo_entregado" class="formulario__label">Archivo:</label>
+                <input type="file" name="archivo_entregado" id="archivo_entregado" class="formulario__input">
 
                 <label for="materia" class="formulario__label">Materia:</label>
                 <select class="formulario__input" name="materia" id="materia">
@@ -108,10 +139,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </form>
         </div>
     <?php } else { ?>
-        <ul>
+        <div class="task-list">
             <?php
             // Consultar la base de datos para obtener las tareas asignadas al usuario actual
-            $query_tareas = "SELECT tareas.nombre, tareas.descripcion, tareas.fecha_entrega FROM asignaciones_tareas JOIN tareas ON asignaciones_tareas.tarea_id = tareas.id WHERE asignaciones_tareas.user_id = ?";
+            $query_tareas = "SELECT tareas.id, tareas.nombre, tareas.descripcion, tareas.fecha_entrega FROM asignaciones_tareas JOIN tareas ON asignaciones_tareas.tarea_id = tareas.id WHERE asignaciones_tareas.user_id = ?";
             $get_tareas = $conn->prepare($query_tareas);
             $get_tareas->execute([$user_id]);
             $tareas = $get_tareas->fetchAll();
@@ -121,14 +152,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<div class='text-center'><h2>No hay tareas asignadas</h2><img style='max-width: 300px;' src='build/img/tareas.svg' alt='Imagen Tareas' /></div>";
             } else {
                 echo "<h2>Tareas asignadas</h2>";
-
+                echo "<ul class='task-ul'>";
                 // Iterar sobre los resultados y mostrar cada tarea
                 foreach ($tareas as $tarea) {
-                    echo "<li>" . $tarea['nombre'] . " - " . $tarea['descripcion'] . " - " . $tarea['fecha_entrega'] . "</li>";
+                    echo "<li class='task-item'>";
+                    echo "<div class='task-flex'>";
+                    echo "<span>" . $tarea['nombre'] . "</span>";
+                    echo "<span>Fecha de Entrega: " . $tarea['fecha_entrega'] . "</span>";
+                    echo "</div>";
+                    echo "<a href='tarea.php?id=" . $tarea["id"] . "' class='task-link'>Ver tarea</a>";
+                    echo "</li>";
+                    echo "<hr class='hr' />";
                 }
+                echo "</ul>";
             }
             ?>
-        </ul>
+        </div>
     <?php }
 
     require("components/footer.php"); ?>

@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (strlen($tipo_lectura) > 255) $errors['tipo_lectura'] = "El tipo de lectura es demasiado largo.";
 
     // Verificar si se ha subido un archivo
-    if (!isset($_FILES['archivo']) || $_FILES['archivo']['error'] === UPLOAD_ERR_NO_FILE) $errors[] = "Por favor, seleccione un archivo.";
+    if (!isset($_FILES['archivo']) || $_FILES['archivo']['error'] === UPLOAD_ERR_NO_FILE) $errors['archivo'] = "Por favor, seleccione un archivo.";
     else {
         // Obtener la extensión del archivo
         $extension = strtolower(pathinfo($archivo_nombre, PATHINFO_EXTENSION));
@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Verificar si la extensión es válida
         $extensiones_validas = array("pdf", "xls", "xlsx", "doc", "docx");
 
-        if (!in_array($extension, $extensiones_validas)) $errors[] = "La extensión del archivo no es válida. Por favor, seleccione un archivo PDF, Excel o Word.";
+        if (!in_array($extension, $extensiones_validas)) $errors['archivo'] = "La extensión del archivo no es válida. Por favor, seleccione un archivo PDF, Excel o Word.";
     }
 
     // Si no hay errores, procede a subir el archivo y guardar en la base de datos
